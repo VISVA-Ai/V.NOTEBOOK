@@ -137,14 +137,28 @@
         html.dark .text-on-surface-variant { color: #a0a4b0 !important; }
         html.dark .border-\[\#D1CEC7\] { border-color: #3f4147 !important; }
         html.dark .glass-panel { backdrop-filter: blur(20px); background: rgba(26, 27, 30, 0.85); }
-        html.dark .message-user { background: #3d6cb5; }
-        html.dark .message-assistant { background: #2b2d31; border-color: rgba(63,65,71,0.5); }
-        html.dark .message-system { background: #332d1a; border-color: #665a2e; }
+        
+        /* Notebook Chat Bubbles */
+        html.dark .message-user { background: #3d6cb5; color: #ffffff; }
+        html.dark .message-assistant { background: #2b2d31; border-color: rgba(63,65,71,0.5); color: #e4e2dc; }
+        html.dark .message-system { background: #332d1a; border-color: #665a2e; color: #fde68a; }
+        
+        /* Assistant Action Cards & Chat Bubbles */
+        html.dark .chat-message.user > .msg-bubble { background: #3d6cb5; color: #ffffff; border-color: rgba(61,108,181,0.5); }
+        html.dark .chat-message.assistant > .msg-bubble { background: #2b2d31; border-color: rgba(63,65,71,0.5); color: #e4e2dc; }
+        html.dark .chat-message.system > .msg-bubble { background: #332d1a; border-color: #665a2e; }
         html.dark .action-card { background: #2b2d31; border-color: #3f4147; }
         html.dark .action-card-header { background: #35373b; }
+        html.dark .action-param-label { color: #a0a4b0; }
+        html.dark .action-param-value { color: #e4e2dc; }
         html.dark .assistant-input-wrap { background: #2b2d31; border-color: rgba(63,65,71,0.3); }
         html.dark .result-card.success { background: #1a2e1a; border-color: #2d5a2d; }
         html.dark .result-card.failure { background: #2e1a1a; border-color: #5a2d2d; }
+        
+        /* Nav Tabs & Gradients */
+        html.dark #nav-notebook, html.dark #nav-assistant { color: #a0a4b0; }
+        html.dark #nav-notebook.text-\[\#005bbf\], html.dark #nav-assistant.text-\[\#005bbf\] { color: #7cacf8; border-color: #7cacf8; }
+        html.dark .assistant-bottom { background: linear-gradient(to top, #1a1b1e 60%, transparent); }
 
         /* ══════════════════════════════════════════════════════════
            ASSISTANT UI  —  dynamically injected by dashboard.js
