@@ -44,9 +44,11 @@ The project demonstrates advanced AI/ML engineering concepts including semantic 
 <br>
 
 <div align="center">
-  <!-- IMPORTANT: Add a screenshot showing the assistant previewing an action card here -->
-  <img src="assets/assistant-action.png" alt="V.ASSISTANT Preview Card" width="600">
-  <p><em>V.ASSISTANT requiring human approval before executing an action.</em></p>
+  <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+    <img src="assets/assistant-action.png" alt="V.ASSISTANT Preview Card" width="45%">
+    <img src="assets/gmail-integration.png" alt="Gmail Integration" width="45%">
+  </div>
+  <p><em>V.ASSISTANT requiring human approval (Left) and Gmail Intelligence in action (Right).</em></p>
 </div>
 
 ---
