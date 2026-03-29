@@ -60,8 +60,7 @@ const App = {
 
     async loadSession(sessionId) {
         try {
-            const session = await API.getSession(sessionId); // Must implement getSession in API helper if missing
-            // Or use getSessions and filter? No, getSession(id) handles full details.
+            const session = await API.getSession(sessionId);
 
             State.setSession(session.session_id, session.title);
             localStorage.setItem('last_session_id', session.session_id);
@@ -69,15 +68,14 @@ const App = {
             // Update UI
             NotebookUI.renderMessages(session.messages || []);
 
-            // Also refresh goals if needed?
-            // GoalsUI.load(sessionId); // If GoalsUI supports it
+            // Explicitly refresh session-scoped panels
+            if (window.SourcesUI) SourcesUI.refresh();
+            if (window.GoalsUI) GoalsUI.refresh();
 
         } catch (e) {
             console.error("Failed to load session:", e);
-            // If 404, maybe clear localStorage and try again?
             if (e.message.includes("404")) {
                 localStorage.removeItem('last_session_id');
-                // retry restore?
             }
         }
     },
@@ -108,7 +106,7 @@ const App = {
                     }
                     return;
                 }
-                if (!confirm("Start a new session?")) return;
+                // Removed confirm prompt for better UX
                 try {
                     const newSession = await API.createSession("New Research");
                     await this.loadSession(newSession.session_id);

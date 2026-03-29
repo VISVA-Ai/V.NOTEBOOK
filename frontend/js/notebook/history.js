@@ -200,10 +200,6 @@ const HistoryUI = {
     },
 
     async deleteSession(sessionId) {
-        if (!confirm('Permanently delete this chat?')) {
-            return;
-        }
-
         console.log(`[HistoryUI] Attempting to delete session: ${sessionId}`);
 
         try {
