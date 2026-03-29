@@ -16,14 +16,12 @@ const App = {
         if (window.HistoryUI) HistoryUI.init();
         if (window.StudioUI) StudioUI.init();
 
-        // 3. Session Management
-        await this.restoreSession();
-
-        // 4. Initialize Router
+        // 3. Initialize Router & Bind Global Events (Immediate response)
         Router.init();
-
-        // 5. Bind Global Events
         this.bindEvents();
+
+        // 4. Session Management (Async restoration)
+        await this.restoreSession();
 
         console.log('V.NOTEBOOK Ready.');
     },

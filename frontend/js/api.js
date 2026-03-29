@@ -78,12 +78,12 @@ const API = {
             method: 'POST',
             body: formData
         });
-        
+
         if (!response.ok) {
             const errorBody = await response.json().catch(() => ({}));
             throw new Error(errorBody.detail || `Upload failed: ${response.status}`);
         }
-        
+
         return await response.json();
     },
 

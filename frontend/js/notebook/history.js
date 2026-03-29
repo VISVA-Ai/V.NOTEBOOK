@@ -230,7 +230,7 @@ const HistoryUI = {
                     NotebookUI.container.innerHTML = '';
                     console.log(`[HistoryUI] Cleared chat container.`);
                 }
-                
+
                 // Properly reset by loading the next available session or creating a new one
                 if (window.App && window.App.restoreSession) {
                     console.log(`[HistoryUI] Restoring next available session...`);

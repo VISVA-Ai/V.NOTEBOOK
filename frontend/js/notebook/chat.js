@@ -359,7 +359,7 @@ const NotebookUI = {
             const ts = document.createElement('span');
             ts.className = 'nb-msg-timestamp';
             const now = new Date();
-            ts.textContent = `${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+            ts.textContent = `${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
             wrapper.appendChild(ts);
         }
 
@@ -437,7 +437,20 @@ const NotebookUI = {
 
     renderMessages(messages) {
         this.container.innerHTML = '';
-        if (!messages) return;
+
+        // If there are no messages, show the welcome screen
+        if (!messages || messages.length === 0) {
+            this.container.innerHTML = `
+                <div class="flex flex-col gap-2 max-w-[85%]">
+                    <div class="bg-[#FAF9F6] p-8 rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-white/50 text-center">
+                        <h2 class="font-headline text-3xl text-on-surface mb-3 italic">Welcome to your Digital Workspace.</h2>
+                        <p class="text-on-surface-variant leading-relaxed max-w-lg mx-auto">Upload a document to the archive or select an existing session to begin your research.</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
         messages.forEach(m => {
             // Handle metadata for sources
             const sources = m.metadata?.sources || [];
