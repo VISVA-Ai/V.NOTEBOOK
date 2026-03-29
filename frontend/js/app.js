@@ -1,0 +1,142 @@
+const App = {
+    async init() {
+        console.log('V.NOTEBOOK Initializing...');
+
+        // 1. Initialize API & State
+        // (API is global, State is global)
+
+        // 2. Initialize Views
+        NotebookUI.init();
+        AssistantUI.init();
+
+        // Initialize Sub-components
+        if (window.GoalsUI) GoalsUI.init();
+        if (window.SourcesUI) SourcesUI.init();
+        if (window.FlashcardsUI) FlashcardsUI.init();
+        if (window.HistoryUI) HistoryUI.init();
+        if (window.StudioUI) StudioUI.init();
+
+        // 3. Session Management
+        await this.restoreSession();
+
+        // 4. Initialize Router
+        Router.init();
+
+        // 5. Bind Global Events
+        this.bindEvents();
+
+        console.log('V.NOTEBOOK Ready.');
+    },
+
+    async restoreSession() {
+        // Try to get last session from backend or local state
+        // Current implementation of API.getSessions() returns list.
+        // We might need an endpoint to get "current" or just load the most recent.
+
+        try {
+            const sessions = await API.getSessions();
+            if (sessions && sessions.length > 0) {
+                // Load most recent
+                const lastSession = sessions[0];
+                await this.loadSession(lastSession.session_id);
+            } else {
+                // No sessions, create new
+                console.log("No sessions found, creating new...");
+                const newSession = await API.createSession("New Research");
+                await this.loadSession(newSession.session_id);
+                // Refresh history since we just created one
+                if (window.HistoryUI) HistoryUI.loadHistory();
+            }
+        } catch (e) {
+            console.error("Failed to restore session:", e);
+            // Fallback
+            try {
+                const newSession = await API.createSession("New Research");
+                await this.loadSession(newSession.session_id);
+                if (window.HistoryUI) HistoryUI.loadHistory();
+            } catch (err2) {
+                console.error("Critical: Cannot create session", err2);
+            }
+        }
+    },
+
+    async loadSession(sessionId) {
+        try {
+            const session = await API.getSession(sessionId); // Must implement getSession in API helper if missing
+            // Or use getSessions and filter? No, getSession(id) handles full details.
+
+            State.setSession(session.session_id, session.title);
+            localStorage.setItem('last_session_id', session.session_id);
+
+            // Update UI
+            NotebookUI.renderMessages(session.messages || []);
+
+            // Also refresh goals if needed?
+            // GoalsUI.load(sessionId); // If GoalsUI supports it
+
+        } catch (e) {
+            console.error("Failed to load session:", e);
+            // If 404, maybe clear localStorage and try again?
+            if (e.message.includes("404")) {
+                localStorage.removeItem('last_session_id');
+                // retry restore?
+            }
+        }
+    },
+
+    bindEvents() {
+        document.getElementById('btn-notebook').onclick = () => {
+            console.log("Navigating to Notebook");
+            Router.navigate('notebook');
+        };
+        document.getElementById('btn-assistant').onclick = () => {
+            console.log("Navigating to Assistant");
+            Router.navigate('assistant');
+        };
+
+        const newChatBtn = document.getElementById('btn-new-chat');
+        if (newChatBtn) {
+            newChatBtn.onclick = async () => {
+                // If on assistant page, reset assistant context
+                if (State.data.currentWorkspace === 'assistant') {
+                    try {
+                        await API.resetAssistantSession();
+                        // Re-init the assistant UI
+                        if (window.AssistantUI) {
+                            await AssistantUI.init();
+                        }
+                    } catch (e) {
+                        console.error("Failed to reset assistant session:", e);
+                    }
+                    return;
+                }
+                if (!confirm("Start a new session?")) return;
+                try {
+                    const newSession = await API.createSession("New Research");
+                    await this.loadSession(newSession.session_id);
+                    if (window.HistoryUI) HistoryUI.loadHistory();
+                } catch (e) {
+                    alert("Failed to create new session: " + e.message);
+                }
+            };
+        }
+
+        // Theme Toggle
+        const themeBtn = document.getElementById('theme-btn');
+        if (themeBtn) {
+            themeBtn.onclick = () => {
+                State.toggleTheme();
+                themeBtn.textContent = State.data.theme === 'dark' ? 'light_mode' : 'dark_mode';
+            };
+            // Set initial icon based on current theme
+            themeBtn.textContent = State.data.theme === 'dark' ? 'light_mode' : 'dark_mode';
+        }
+    }
+};
+
+window.App = App;
+// Ensure DOM content is loaded before init
+document.addEventListener('DOMContentLoaded', () => {
+    // Wait for other scripts (like StudioUI) to load
+    setTimeout(() => App.init(), 100);
+});

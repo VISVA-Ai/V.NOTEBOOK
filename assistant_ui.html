@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>V.ASSISTANT | Digital Archive Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:ital,wght@0,700;1,700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Newsreader:opsz,wght@6..72,400;6..72,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed": "#001a41",
+              "error": "#ba1a1a",
+              "surface-dim": "#dcdad4",
+              "surface-variant": "#e4e2dc",
+              "surface-bright": "#fbf9f3",
+              "error-container": "#ffdad6",
+              "on-background": "#1b1c18",
+              "on-secondary-container": "#3d5481",
+              "primary": "#005bbf",
+              "outline": "#727785",
+              "on-tertiary-fixed": "#341100",
+              "tertiary-fixed-dim": "#ffb691",
+              "inverse-primary": "#adc7ff",
+              "surface": "#fbf9f3",
+              "secondary-container": "#b2c9fe",
+              "tertiary-fixed": "#ffdbcb",
+              "on-tertiary": "#ffffff",
+              "on-secondary-fixed-variant": "#2e4673",
+              "secondary": "#475e8c",
+              "primary-fixed": "#d8e2ff",
+              "on-tertiary-container": "#0e0200",
+              "surface-container-high": "#eae8e2",
+              "surface-container-low": "#f5f3ed",
+              "background": "#fbf9f3",
+              "on-tertiary-fixed-variant": "#783100",
+              "surface-container-lowest": "#ffffff",
+              "tertiary": "#9e4300",
+              "tertiary-container": "#c55500",
+              "surface-container": "#f0eee8",
+              "secondary-fixed": "#d8e2ff",
+              "on-secondary": "#ffffff",
+              "inverse-on-surface": "#f3f1eb",
+              "on-error-container": "#93000a",
+              "on-primary-fixed": "#001a41",
+              "surface-container-highest": "#e4e2dc",
+              "secondary-fixed-dim": "#afc7fb",
+              "on-surface": "#1b1c18",
+              "on-error": "#ffffff",
+              "inverse-surface": "#30312d",
+              "on-primary": "#ffffff",
+              "surface-tint": "#005bc0",
+              "on-primary-container": "#ffffff",
+              "primary-container": "#1a73e8",
+              "outline-variant": "#c1c6d6",
+              "primary-fixed-dim": "#adc7ff",
+              "on-surface-variant": "#414754",
+              "on-primary-fixed-variant": "#004493"
+            },
+            fontFamily: {
+              "headline": ["Playfair Display", "serif"],
+              "body": ["Inter", "sans-serif"],
+              "label": ["Inter", "sans-serif"],
+              "mono": ["JetBrains Mono", "monospace"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #fbf9f3; }
+        .serif-title { font-family: 'Playfair Display', serif; }
+        .mono-meta { font-family: 'JetBrains Mono', monospace; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-background text-on-surface flex h-screen overflow-hidden">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-[#fbf9f3] dark:bg-slate-900 flex justify-between items-center w-full px-6 py-3 sticky top-0 z-50 fixed">
+<div class="flex items-center gap-8">
+<h1 class="text-2xl font-serif italic text-[#1b1c18] dark:text-slate-100">V.NOTEBOOK</h1>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-[#1b1c18]/60 dark:text-slate-400 font-medium hover:text-[#005bbf] dark:hover:text-[#1a73e8] transition-colors" href="{{DATA:SCREEN:SCREEN_7}}">V.NB</a>
+<a class="text-[#005bbf] dark:text-[#1a73e8] font-bold border-b-2 border-[#005bbf] pb-1" href="{{DATA:SCREEN:SCREEN_5}}">V.ASSISTANT</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-[#1b1c18]/60 font-medium hover:text-[#005bbf] transition-colors">Do not learn</button>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-4 py-2 rounded shadow-sm font-medium active:opacity-80 active:scale-95 transition-all text-sm">+ New Chat</button>
+<div class="flex items-center gap-2 ml-2">
+<span class="material-symbols-outlined text-[#1b1c18]/60 cursor-pointer p-1 hover:bg-surface-container-high rounded transition-colors" data-icon="dark_mode">dark_mode</span>
+<span class="material-symbols-outlined text-[#1b1c18]/60 cursor-pointer p-1 hover:bg-surface-container-high rounded transition-colors" data-icon="settings">settings</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden ml-2 border border-outline-variant/15">
+<img class="w-full h-full object-cover" data-alt="close-up portrait of a professional man in a studio with soft warm lighting and neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLENGCNTQ2mX5YSBM94PW5Y-tcla-VaEfqN3jm-c-TVyfn-RgWMO1BLdZ_l_wKqTz06jwrdp52d4xfa_8dkOYiyZEih_YWO3O37fKtzlDZzZwF611W1KMDz_c0KtyUVm81-B2x_R873df8JHqTNbbi_79RkiJV1TAK-F3aOyKvb4deEXX06o8pB0ridAyA-F_Kq-MFcsch5RwKEX_ufUSDNazOHtlKtnlTl4hE5fdMiK4eeh4ve6NzTJC4hgw0Ccdke85V7srg_HQ"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col h-full pt-16 relative bg-background">
+<!-- Header Section -->
+<section class="max-w-3xl w-full mx-auto pt-12 pb-8 px-6">
+<div class="flex flex-col items-center text-center gap-4">
+<h2 class="text-5xl serif-title italic text-on-surface">⚡ V.ASSISTANT</h2>
+<p class="text-on-surface-variant max-w-md mx-auto leading-relaxed">Your digital archivist and executive partner. Connected to your scholarly ecosystem.</p>
+<div class="flex gap-4 mt-4">
+<!-- Provider Badges -->
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded-full border border-outline-variant/10">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="mono-meta text-[10px] uppercase tracking-wider font-semibold opacity-70">Gmail</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded-full border border-outline-variant/10">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="mono-meta text-[10px] uppercase tracking-wider font-semibold opacity-70">Calendar</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded-full border border-outline-variant/10 opacity-40">
+<span class="w-2 h-2 rounded-full bg-on-surface-variant/30"></span>
+<span class="mono-meta text-[10px] uppercase tracking-wider font-semibold">WhatsApp</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Chat Container -->
+<div class="flex-1 overflow-y-auto px-6 pb-40 hide-scrollbar">
+<div class="max-w-3xl mx-auto space-y-10">
+<!-- Message: User -->
+<div class="flex justify-end">
+<div class="max-w-[80%] bg-surface-container-lowest p-4 rounded-xl shadow-[0_4px_20px_rgba(27,28,24,0.03)] border border-outline-variant/5">
+<p class="text-on-surface text-[15px] leading-relaxed">Can you check my inbox for any urgent emails from Dr. Aris about the parchment study? If found, draft a concise reply confirming the Tuesday meeting.</p>
+</div>
+</div>
+<!-- Message: Assistant -->
+<div class="flex justify-start gap-4">
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center flex-shrink-0 mt-1">
+<span class="material-symbols-outlined text-white text-sm" data-icon="bolt">bolt</span>
+</div>
+<div class="max-w-[85%] space-y-6">
+<p class="text-on-surface text-[15px] leading-relaxed">I found one relevant email from <span class="font-semibold">Dr. Aris (aris.archivist@edu.org)</span> received 2 hours ago. Subject: <span class="italic">"Parchment Sample Carbon-Dating Results"</span>.</p>
+<!-- Result Card -->
+<div class="bg-surface-container-lowest border-l-4 border-emerald-500 p-5 rounded-r-xl shadow-sm space-y-3">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-semibold text-sm">RE: Parchment Sample Results</h4>
+<p class="text-xs text-on-surface-variant mono-meta">Sent: Today, 11:42 AM</p>
+</div>
+<span class="bg-emerald-100 text-emerald-800 text-[10px] mono-meta px-2 py-0.5 rounded font-bold">FOUND</span>
+</div>
+<p class="text-sm text-on-surface/80 line-clamp-2">"Hi, I've just uploaded the dating report. Would you like to discuss this Tuesday at 10 AM or 2 PM?"</p>
+<button class="text-primary text-xs font-semibold flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-[16px]" data-icon="reply">reply</span> Draft Reply
+                            </button>
+</div>
+<p class="text-on-surface text-[15px]">I've prepared a draft for you to review:</p>
+<!-- Action Card: Email Draft -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/20 overflow-hidden shadow-lg">
+<div class="bg-surface-container-high px-5 py-3 border-b border-outline-variant/10 flex justify-between items-center">
+<span class="mono-meta text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Drafting Email</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="mail">mail</span>
+</div>
+<div class="p-6 space-y-4">
+<div class="grid grid-cols-[80px_1fr] items-center gap-2 border-b border-outline-variant/10 pb-2">
+<span class="text-xs font-semibold text-on-surface-variant">To:</span>
+<span class="text-sm text-on-surface">aris.archivist@edu.org</span>
+</div>
+<div class="grid grid-cols-[80px_1fr] items-center gap-2 border-b border-outline-variant/10 pb-2">
+<span class="text-xs font-semibold text-on-surface-variant">Subject:</span>
+<span class="text-sm text-on-surface">Re: Parchment Sample Carbon-Dating Results</span>
+</div>
+<div class="pt-2">
+<textarea class="w-full text-sm leading-relaxed border-none focus:ring-0 p-0 bg-transparent min-h-[120px] resize-none text-on-surface" spellcheck="false">Dear Dr. Aris,
+
+Thank you for sending over the reports. I've reviewed the preliminary findings and would like to confirm our meeting for Tuesday at 10 AM.
+
+Looking forward to the discussion.
+
+Best regards,
+V. Assistant</textarea>
+</div>
+<div class="flex flex-wrap gap-3 pt-4">
+<button class="bg-gradient-to-br from-primary to-primary-container text-white px-5 py-2 rounded text-sm font-semibold flex items-center gap-2 hover:opacity-90 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span> Approve &amp; Execute
+                                    </button>
+<button class="bg-surface-container-high text-on-surface px-5 py-2 rounded text-sm font-medium flex items-center gap-2 hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span> Edit
+                                    </button>
+<button class="bg-transparent text-error px-4 py-2 rounded text-sm font-medium flex items-center gap-2 hover:bg-error/5 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="close">close</span> Cancel
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Input Bar (Fixed Bottom) -->
+<div class="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-xl pb-10 pt-4 z-40">
+<div class="max-w-3xl mx-auto px-6">
+<!-- Quick Action Chips -->
+<div class="flex gap-2 mb-4 overflow-x-auto hide-scrollbar">
+<button class="flex-shrink-0 px-4 py-1.5 bg-surface-container-low border border-outline-variant/15 rounded-full flex items-center gap-2 hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="mail">mail</span>
+<span class="text-xs font-semibold text-on-surface-variant">📧 Check Inbox</span>
+</button>
+<button class="flex-shrink-0 px-4 py-1.5 bg-surface-container-low border border-outline-variant/15 rounded-full flex items-center gap-2 hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="calendar_today">calendar_today</span>
+<span class="text-xs font-semibold text-on-surface-variant">📅 Today's Events</span>
+</button>
+<button class="flex-shrink-0 px-4 py-1.5 bg-surface-container-low border border-outline-variant/15 rounded-full flex items-center gap-2 hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="task">task</span>
+<span class="text-xs font-semibold text-on-surface-variant">📝 Summarize Notes</span>
+</button>
+<button class="flex-shrink-0 px-4 py-1.5 bg-surface-container-low border border-outline-variant/15 rounded-full flex items-center gap-2 hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="history">history</span>
+<span class="text-xs font-semibold text-on-surface-variant">📜 Recent Sources</span>
+</button>
+</div>
+<!-- Main Input Field -->
+<div class="relative group">
+<div class="absolute inset-0 bg-primary/5 rounded-2xl blur-xl group-focus-within:bg-primary/10 transition-all opacity-0 group-focus-within:opacity-100"></div>
+<div class="relative flex items-center bg-surface-container-lowest border border-outline-variant/30 rounded-2xl shadow-lg focus-within:border-primary/50 transition-all overflow-hidden p-2">
+<button class="p-3 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="attachment">attachment</span>
+</button>
+<input class="flex-1 bg-transparent border-none focus:ring-0 py-4 px-2 text-on-surface placeholder:text-on-surface-variant/40 text-[15px]" placeholder="Instruct your digital assistant..." type="text"/>
+<button class="bg-gradient-to-br from-primary to-primary-container text-white w-12 h-12 rounded-xl flex items-center justify-center hover:shadow-[0_4px_12px_rgba(0,91,191,0.3)] active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="send" data-weight="fill">send</span>
+</button>
+</div>
+</div>
+<div class="flex justify-center mt-3">
+<p class="mono-meta text-[9px] uppercase tracking-tighter text-on-surface-variant/50">Shift + Enter for new line • V.ASSISTANT 1.0.4-BETA</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Side Decoration (Digital Archivist Touch) -->
+<div class="hidden lg:block fixed right-0 top-0 bottom-0 w-64 bg-surface-container-low pointer-events-none opacity-30 select-none">
+<div class="p-10 space-y-24">
+<div class="rotate-90 origin-left mt-32">
+<span class="mono-meta text-[10px] uppercase tracking-[0.5em] text-on-surface whitespace-nowrap">DOCUMENTATION / ARCHIVE / LOGS</span>
+</div>
+<div class="space-y-4">
+<div class="h-[1px] w-full bg-outline-variant/20"></div>
+<div class="h-[1px] w-3/4 bg-outline-variant/20"></div>
+<div class="h-[1px] w-full bg-outline-variant/20"></div>
+</div>
+</div>
+</div>
+</body></html>

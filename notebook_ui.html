@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>V.NOTEBOOK | Digital Archive Workspace</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;family=Newsreader:opsz,wght@6..72,400;6..72,700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed": "#001a41",
+              "error": "#ba1a1a",
+              "surface-dim": "#dcdad4",
+              "surface-variant": "#e4e2dc",
+              "surface-bright": "#fbf9f3",
+              "error-container": "#ffdad6",
+              "on-background": "#1b1c18",
+              "on-secondary-container": "#3d5481",
+              "primary": "#005bbf",
+              "outline": "#727785",
+              "on-tertiary-fixed": "#341100",
+              "tertiary-fixed-dim": "#ffb691",
+              "inverse-primary": "#adc7ff",
+              "surface": "#fbf9f3",
+              "secondary-container": "#b2c9fe",
+              "tertiary-fixed": "#ffdbcb",
+              "on-tertiary": "#ffffff",
+              "on-secondary-fixed-variant": "#2e4673",
+              "secondary": "#475e8c",
+              "primary-fixed": "#d8e2ff",
+              "on-tertiary-container": "#0e0200",
+              "surface-container-high": "#eae8e2",
+              "surface-container-low": "#f5f3ed",
+              "background": "#fbf9f3",
+              "on-tertiary-fixed-variant": "#783100",
+              "surface-container-lowest": "#ffffff",
+              "tertiary": "#9e4300",
+              "tertiary-container": "#c55500",
+              "surface-container": "#f0eee8",
+              "secondary-fixed": "#d8e2ff",
+              "on-secondary": "#ffffff",
+              "inverse-on-surface": "#f3f1eb",
+              "on-error-container": "#93000a",
+              "on-primary-fixed": "#001a41",
+              "surface-container-highest": "#e4e2dc",
+              "secondary-fixed-dim": "#afc7fb",
+              "on-surface": "#1b1c18",
+              "on-error": "#ffffff",
+              "inverse-surface": "#30312d",
+              "on-primary": "#ffffff",
+              "surface-tint": "#005bc0",
+              "on-primary-container": "#ffffff",
+              "primary-container": "#1a73e8",
+              "outline-variant": "#c1c6d6",
+              "primary-fixed-dim": "#adc7ff",
+              "on-surface-variant": "#414754",
+              "on-primary-fixed-variant": "#004493"
+            },
+            fontFamily: {
+              "headline": ["Newsreader", "Playfair Display", "serif"],
+              "body": ["Inter", "sans-serif"],
+              "label": ["Inter", "sans-serif"],
+              "mono": ["JetBrains Mono", "monospace"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d1cec7;
+            border-radius: 10px;
+        }
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            background: rgba(251, 249, 243, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body h-screen flex flex-col overflow-hidden">
+<!-- TopNavBar (Shared Component) -->
+<header class="flex justify-between items-center w-full px-6 py-3 sticky top-0 z-50 bg-[#fbf9f3] dark:bg-slate-900">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-serif italic text-[#1b1c18] dark:text-slate-100">V.NOTEBOOK</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-[#005bbf] dark:text-[#1a73e8] font-bold border-b-2 border-[#005bbf] pb-1" href="{{DATA:SCREEN:SCREEN_7}}">V.NB</a>
+<a class="text-[#1b1c18]/60 dark:text-slate-400 font-medium hover:text-[#005bbf] transition-colors" href="{{DATA:SCREEN:SCREEN_5}}">V.ASSISTANT</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-[#1b1c18]/60 font-medium px-3 py-1.5 hover:text-[#005bbf] transition-colors">Do not learn</button>
+<button class="bg-primary-container text-on-primary-container px-4 py-1.5 rounded-lg font-medium shadow-sm active:opacity-80 active:scale-95 transition-all">+ New Chat</button>
+<div class="flex gap-2 ml-4">
+<span class="material-symbols-outlined cursor-pointer text-on-surface-variant p-2 hover:bg-surface-container-high rounded-full transition-colors" data-icon="settings">settings</span>
+<span class="material-symbols-outlined cursor-pointer text-on-surface-variant p-2 hover:bg-surface-container-high rounded-full transition-colors" data-icon="dark_mode">dark_mode</span>
+<div class="w-8 h-8 rounded-full overflow-hidden ml-2 ring-1 ring-outline-variant">
+<img alt="User Settings" data-alt="close-up portrait of a professional man in a scholarly setting with soft natural window lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIa5L__diUgytmDKTAT7xzkOCvtOdnr-lHj2XLj2wkKpuuDjxtthDZ_2IOaNSvLc4Vw4zsrZnr-HJQtPYadNc_GwGM_71YTyFI4QyK4VxeugZxvgXZnqbwT7UoLezU8mejTXkdzbEumCgDEtu59Vf8f2Bo_-y5XLS-HRx5UxfuahmBaZHXbM7YT0Rj9ln3r-YZs7uHfP2e_sUDcrH_tlkzIRR8BQa81fWOZAduTNBmKNHnIpluyBfVEjjzqi7Z2_UYsomM4JZrczE"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Workspace Grid -->
+<main class="flex-1 grid grid-cols-[250px_1fr_280px] overflow-hidden bg-surface-container-low">
+<!-- Column 1: Sources & History (SideNavBar Mapping) -->
+<aside class="flex flex-col h-full bg-[#f5f3ed] dark:bg-slate-800/50 border-r border-[#D1CEC7]">
+<!-- Sidebar Header -->
+<div class="p-6 pb-2">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-lg font-serif text-[#1b1c18] dark:text-slate-100">V.NB</span>
+</div>
+<p class="font-mono text-[10px] uppercase text-[#1b1c18]/70 tracking-widest">Digital Archive</p>
+</div>
+<!-- Tab Switcher -->
+<div class="flex px-4 mt-4 gap-1">
+<button class="flex-1 py-2 text-center font-mono text-[10px] uppercase bg-[#ffffff] text-[#005bbf] font-bold rounded-t-lg">Sources</button>
+<button class="flex-1 py-2 text-center font-mono text-[10px] uppercase text-[#1b1c18]/70 hover:bg-[#eae8e2] rounded-t-lg transition-all">History</button>
+</div>
+<!-- PDF List Area -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4">
+<div class="group cursor-pointer p-3 rounded-xl bg-surface-container-lowest transition-all hover:ring-1 hover:ring-primary/20">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="picture_as_pdf">picture_as_pdf</span>
+<div class="min-w-0">
+<p class="text-sm font-medium text-on-surface truncate">Neural_Architecture_V4.pdf</p>
+<p class="font-mono text-[9px] text-on-surface-variant mt-1">14.2 MB • OCT 24</p>
+</div>
+</div>
+</div>
+<div class="group cursor-pointer p-3 rounded-xl hover:bg-surface-container-high transition-all">
+<div class="flex items-start gap-3 opacity-70">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="picture_as_pdf">picture_as_pdf</span>
+<div class="min-w-0">
+<p class="text-sm font-medium text-on-surface truncate">Deep_Learning_Basics.pdf</p>
+<p class="font-mono text-[9px] text-on-surface-variant mt-1">8.5 MB • OCT 22</p>
+</div>
+</div>
+</div>
+<div class="group cursor-pointer p-3 rounded-xl hover:bg-surface-container-high transition-all">
+<div class="flex items-start gap-3 opacity-70">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="picture_as_pdf">picture_as_pdf</span>
+<div class="min-w-0">
+<p class="text-sm font-medium text-on-surface truncate">ML_Optimization_Thesis.pdf</p>
+<p class="font-mono text-[9px] text-on-surface-variant mt-1">21.0 MB • OCT 20</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Action -->
+<div class="p-4 border-t border-[#D1CEC7] bg-[#f5f3ed]">
+<button class="w-full flex items-center justify-center gap-2 py-3 bg-surface-container-lowest border border-dashed border-outline-variant text-primary font-medium hover:bg-white hover:border-primary transition-all rounded-lg">
+<span class="material-symbols-outlined text-sm" data-icon="upload_file">upload_file</span>
+<span class="text-xs uppercase font-mono tracking-tight">Upload PDF</span>
+</button>
+</div>
+</aside>
+<!-- Column 2: Main Chat Canvas -->
+<section class="flex flex-col h-full bg-[#F2F0EA]">
+<!-- Mode Selector Header -->
+<div class="flex justify-center p-4 border-b border-[#D1CEC7]/30 bg-white/50 backdrop-blur-md">
+<div class="inline-flex p-1 bg-surface-container-high rounded-full gap-1">
+<button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-white text-primary shadow-sm">Fast Mode</button>
+<button class="px-4 py-1.5 rounded-full text-xs font-medium text-on-surface-variant hover:bg-white/50 transition-colors">Grounded Mode</button>
+<button class="px-4 py-1.5 rounded-full text-xs font-medium text-on-surface-variant hover:bg-white/50 transition-colors">Deep Research</button>
+</div>
+</div>
+<!-- Chat Content -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-8">
+<!-- Assistant Message -->
+<div class="flex flex-col gap-2 max-w-[85%]">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-mono text-[10px] uppercase tracking-widest text-primary font-bold">Assistant</span>
+</div>
+<div class="bg-[#FAF9F6] p-6 rounded-2xl rounded-tl-none shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-white/50">
+<h2 class="font-headline text-2xl text-on-surface mb-3 italic">Welcome to your Digital Workspace.</h2>
+<p class="text-on-surface-variant leading-relaxed">I've analyzed the <span class="text-primary font-medium">Neural_Architecture_V4.pdf</span>. It appears to focus heavily on transformer scalability and attention mechanisms. How would you like to proceed with this archive?</p>
+<div class="mt-4 flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-[10px] font-mono text-on-surface-variant border border-outline-variant/20 uppercase">Transformer Layering</span>
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-[10px] font-mono text-on-surface-variant border border-outline-variant/20 uppercase">Optimization Logic</span>
+</div>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex flex-col items-end gap-2 ml-auto max-w-[80%]">
+<div class="bg-primary text-white p-5 rounded-2xl rounded-tr-none shadow-lg">
+<p class="leading-relaxed">Can you summarize the core breakthroughs mentioned in section 3.2 regarding the memory-efficient attention mechanism?</p>
+</div>
+<span class="font-mono text-[9px] uppercase tracking-widest text-on-surface-variant pr-2">Read 10:42 AM</span>
+</div>
+<!-- Assistant Message 2 -->
+<div class="flex flex-col gap-2 max-w-[85%]">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-mono text-[10px] uppercase tracking-widest text-primary font-bold">Assistant</span>
+</div>
+<div class="bg-[#FAF9F6] p-6 rounded-2xl rounded-tl-none shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-white/50">
+<p class="text-on-surface-variant leading-relaxed">Section 3.2 details a <span class="italic">Sparse Global Attention</span> protocol. It reduces complexity from O(n²) to O(n log n) by implementing a tiered caching system. This is consistent with your current goal in <span class="text-primary font-medium">Machine Learning Overview</span>.</p>
+<div class="mt-6 grid grid-cols-2 gap-4">
+<div class="p-3 bg-white/60 rounded-lg border border-outline-variant/10">
+<p class="font-headline italic text-lg text-primary">Key Breakthrough</p>
+<p class="text-sm text-on-surface-variant mt-1">Tiered attention caching reduces latency by 45% in long-sequence tasks.</p>
+</div>
+<div class="p-3 bg-white/60 rounded-lg border border-outline-variant/10">
+<p class="font-headline italic text-lg text-primary">Contextual Link</p>
+<p class="text-sm text-on-surface-variant mt-1">Connects to your previous notes on "Efficiency in LLMs".</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Chat Input Area -->
+<div class="p-6 bg-white/40 backdrop-blur-lg border-t border-[#D1CEC7]/30">
+<div class="max-w-4xl mx-auto relative bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/20 focus-within:ring-2 ring-primary/10 transition-all p-2">
+<textarea class="w-full bg-transparent border-none focus:ring-0 text-on-surface placeholder-on-surface-variant/50 p-3 resize-none custom-scrollbar" placeholder="Ask your digital archive anything..." rows="3"></textarea>
+<div class="flex justify-between items-center px-3 pb-2 pt-1 border-t border-surface-container">
+<div class="flex gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="attach_file">attach_file</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="mic">mic</span>
+</button>
+</div>
+<button class="bg-primary hover:bg-primary-container text-white px-6 py-2 rounded-xl font-medium transition-all flex items-center gap-2 group shadow-md shadow-primary/20">
+<span>Send</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform" data-icon="send">send</span>
+</button>
+</div>
+</div>
+<p class="text-center text-[10px] text-on-surface-variant/40 mt-4 font-mono uppercase tracking-widest">Digital Archivist v4.2.1-stable</p>
+</div>
+</section>
+<!-- Column 3: Studio & Metadata -->
+<aside class="flex flex-col h-full bg-[#e6e4dd] border-l border-[#D1CEC7] overflow-y-auto custom-scrollbar">
+<!-- Studio Section -->
+<div class="p-6">
+<h3 class="font-headline text-xl text-on-surface mb-4 italic">Studio</h3>
+<div class="grid grid-cols-3 gap-3">
+<button class="group flex flex-col items-center justify-center p-3 aspect-square bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+<span class="material-symbols-outlined text-primary mb-2" data-icon="audio_file">audio_file</span>
+<span class="text-[9px] font-mono uppercase text-on-surface-variant group-hover:text-primary transition-colors">Audio</span>
+</button>
+<button class="group flex flex-col items-center justify-center p-3 aspect-square bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+<span class="material-symbols-outlined text-primary mb-2" data-icon="video_library">video_library</span>
+<span class="text-[9px] font-mono uppercase text-on-surface-variant group-hover:text-primary transition-colors">Video</span>
+</button>
+<button class="group flex flex-col items-center justify-center p-3 aspect-square bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+<span class="material-symbols-outlined text-primary mb-2" data-icon="account_tree">account_tree</span>
+<span class="text-[9px] font-mono uppercase text-on-surface-variant group-hover:text-primary transition-colors">Mind Map</span>
+</button>
+<button class="group flex flex-col items-center justify-center p-3 aspect-square bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+<span class="material-symbols-outlined text-primary mb-2" data-icon="history_edu">history_edu</span>
+<span class="text-[9px] font-mono uppercase text-on-surface-variant group-hover:text-primary transition-colors">Draft</span>
+</button>
+<button class="group flex flex-col items-center justify-center p-3 aspect-square bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+<span class="material-symbols-outlined text-primary mb-2" data-icon="quiz">quiz</span>
+<span class="text-[9px] font-mono uppercase text-on-surface-variant group-hover:text-primary transition-colors">Quiz</span>
+</button>
+<button class="group flex flex-col items-center justify-center p-3 aspect-square bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+<span class="material-symbols-outlined text-primary mb-2" data-icon="summarize">summarize</span>
+<span class="text-[9px] font-mono uppercase text-on-surface-variant group-hover:text-primary transition-colors">Brief</span>
+</button>
+</div>
+</div>
+<!-- Active Goals -->
+<div class="px-6 py-4 mt-2">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline text-xl text-on-surface italic">Active Goals</h3>
+<span class="material-symbols-outlined text-on-surface-variant/40 cursor-pointer" data-icon="more_horiz">more_horiz</span>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline-variant/10">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-semibold text-on-surface">Machine Learning Overview</span>
+<span class="bg-surface-container px-2 py-0.5 rounded font-mono text-[8px] tracking-widest uppercase text-on-surface-variant">Inferred</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 50%"></div>
+</div>
+<div class="flex justify-between mt-2">
+<span class="text-[9px] font-mono text-on-surface-variant uppercase">Progress</span>
+<span class="text-[9px] font-mono text-primary font-bold">50% Complete</span>
+</div>
+</div>
+</div>
+<!-- Flashcards -->
+<div class="px-6 py-6 flex-1 flex flex-col justify-end">
+<div class="bg-primary/5 rounded-2xl border-2 border-dashed border-primary/20 p-6 text-center">
+<span class="material-symbols-outlined text-primary text-3xl mb-3" data-icon="style" style="font-variation-settings: 'FILL' 1;">style</span>
+<p class="text-sm font-medium text-on-surface mb-4">Ready to test your knowledge?</p>
+<button class="w-full py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-container transition-all shadow-lg shadow-primary/10">
+                        Generate flashcards
+                    </button>
+</div>
+</div>
+<!-- Side Footer Info -->
+<div class="p-6 border-t border-[#D1CEC7]/50 mt-4">
+<div class="flex items-center gap-4 text-on-surface-variant/60">
+<span class="material-symbols-outlined text-sm cursor-pointer hover:text-primary transition-colors" data-icon="help">help</span>
+<span class="material-symbols-outlined text-sm cursor-pointer hover:text-primary transition-colors" data-icon="shield">shield</span>
+<span class="material-symbols-outlined text-sm cursor-pointer hover:text-primary transition-colors" data-icon="share">share</span>
+<div class="ml-auto flex items-center gap-1 opacity-50">
+<div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+<span class="text-[9px] font-mono uppercase">V.NOTEBOOK SYNCED</span>
+</div>
+</div>
+</div>
+</aside>
+</main>
+</body></html>

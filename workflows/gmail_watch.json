@@ -1,0 +1,79 @@
+{
+    "name": "V.NOTEBOOK - Gmail Watch",
+    "nodes": [
+        {
+            "parameters": {
+                "pollTimes": {
+                    "item": [
+                        {
+                            "mode": "everyMinute"
+                        }
+                    ]
+                },
+                "filters": {
+                    "readStatus": "unread"
+                }
+            },
+            "name": "Gmail Trigger",
+            "type": "n8n-nodes-base.gmailTrigger",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://localhost:8000/api/webhooks/email",
+                "sendBody": true,
+                "contentType": "json",
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "email_id",
+                            "value": "={{$json.id}}"
+                        },
+                        {
+                            "name": "from",
+                            "value": "={{$json.from}}"
+                        },
+                        {
+                            "name": "subject",
+                            "value": "={{$json.subject}}"
+                        },
+                        {
+                            "name": "body",
+                            "value": "={{$json.text}}"
+                        },
+                        {
+                            "name": "received_at",
+                            "value": "={{$json.date}}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "name": "Send to V.NOTEBOOK",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Gmail Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Send to V.NOTEBOOK",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

@@ -1,0 +1,71 @@
+:root {
+    /* Base tokens (shared) */
+    --font-display: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+}
+
+/* Light Theme (Default) */
+:root,
+[data-theme="light"] {
+    --color-canvas: #F2F0EA;
+    --color-structure: #E6E4DD;
+    --color-surface: #FAF9F6;
+    --color-border: #D1CEC7;
+
+    --color-text-primary: #2A2626;
+    --color-text-secondary: #5F5B5B;
+    --color-text-tertiary: #8A8680;
+
+    --color-accent: #1A73E8;
+    --color-accent-hover: #1557B0;
+    --color-primary: #1A73E8;
+    --bg-hover: #D1CEC7;
+
+    /* V.NB Specific */
+    --color-mode-fast: #1A73E8;
+    --color-mode-grounded: #188038;
+    --color-mode-deep: #D93025;
+
+    /* Assistant Priorities */
+    --priority-high: #F28B82;
+    --priority-medium: #FDD663;
+    --priority-low: #81C995;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+    --color-canvas: #131314;
+    --color-structure: #1E1F20;
+    --color-surface: #28292A;
+    --color-border: #2D2E30;
+
+    --color-text-primary: #E3E3E3;
+    --color-text-secondary: #9AA0A6;
+    --color-text-tertiary: #5F6368;
+
+    --color-accent: #8AB4F8;
+    --color-accent-hover: #AECBFA;
+    --color-primary: #8AB4F8;
+    --bg-hover: #2D2E30;
+
+    /* V.NB Specific */
+    --color-mode-fast: #8AB4F8;
+    --color-mode-grounded: #81C995;
+    --color-mode-deep: #F28B82;
+
+    /* Assistant Priorities */
+    --priority-high: #F28B82;
+    --priority-medium: #FDD663;
+    --priority-low: #81C995;
+}

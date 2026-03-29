@@ -1,0 +1,89 @@
+{
+    "name": "V.NOTEBOOK - Send Reply",
+    "nodes": [
+        {
+            "parameters": {
+                "path": "vnotebook-send-reply",
+                "responseMode": "lastNode",
+                "options": {}
+            },
+            "name": "Approval Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "reply",
+                "messageId": "={{$node[\"Approval Webhook\"].json[\"email_id\"]}}",
+                "message": "={{$node[\"Approval Webhook\"].json[\"reply_body\"]}}"
+            },
+            "name": "Send Email",
+            "type": "n8n-nodes-base.gmail",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://localhost:8000/api/webhooks/status",
+                "sendBody": true,
+                "contentType": "json",
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "action",
+                            "value": "reply_sent"
+                        },
+                        {
+                            "name": "email_id",
+                            "value": "={{$node[\"Approval Webhook\"].json[\"email_id\"]}}"
+                        },
+                        {
+                            "name": "success",
+                            "value": true
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "name": "Report Status",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Approval Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Send Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Email": {
+            "main": [
+                [
+                    {
+                        "node": "Report Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>V.NOTEBOOK | Digital Archive Workspace</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,700&display=swap" rel="stylesheet"/>
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#005bbf",
+                        "primary-container": "#1a73e8",
+                        "secondary": "#475e8c",
+                        "secondary-container": "#b2c9fe",
+                        "tertiary": "#9e4300",
+                        "tertiary-container": "#c55500",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "background": "#fbf9f3",
+                        "surface": "#fbf9f3",
+                        "surface-dim": "#dcdad4",
+                        "surface-bright": "#fbf9f3",
+                        "surface-variant": "#e4e2dc",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f5f3ed",
+                        "surface-container": "#f0eee8",
+                        "surface-container-high": "#eae8e2",
+                        "surface-container-highest": "#e4e2dc",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#1b1c18",
+                        "on-surface-variant": "#414754",
+                        "on-background": "#1b1c18",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "outline": "#727785",
+                        "outline-variant": "#c1c6d6",
+                        "inverse-surface": "#30312d",
+                        "inverse-on-surface": "#f3f1eb",
+                        "inverse-primary": "#adc7ff",
+                        "surface-tint": "#005bc0",
+                        /* Assistant-specific tokens */
+                        "canvas": "#F2F0EA",
+                        "structure": "#E6E4DD",
+                        "success": "#10b981",
+                    },
+                    fontFamily: {
+                        "headline": ["Newsreader", "Playfair Display", "serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+    <style>
+        /* ── Material Symbols ── */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* ── Scrollbar ── */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1cec7; border-radius: 10px; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* ── Glass Panel ── */
+        .glass-panel { backdrop-filter: blur(20px); background: rgba(251, 249, 243, 0.8); }
+
+        /* ══════════════════════════════════════════════════════════
+           WORKSPACE SWITCHING  (.workspace / .workspace.active)
+           ══════════════════════════════════════════════════════════ */
+        .workspace { display: none; }
+        .workspace.active { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+        /* ── Sidebar Panel Switching ── */
+        .sidebar-panel { display: none; }
+        .sidebar-panel.active { display: flex; flex-direction: column; flex: 1; }
+
+        /* ── Tab Styling ── */
+        .tab-btn { transition: all 0.15s; }
+        .tab-btn.active { background: #ffffff; color: #005bbf; font-weight: bold; }
+
+        /* ── Mode Pills (injected by chat.js) ── */
+        .mode-pills-container { display: flex; gap: 4px; }
+        .mode-pill {
+            padding: 6px 16px; border-radius: 9999px; font-size: 12px; font-weight: 600;
+            background: transparent; color: #414754; border: none; cursor: pointer; transition: all 0.2s;
+        }
+        .mode-pill:hover { background: rgba(255,255,255,0.5); }
+        .mode-pill.active { background: #ffffff; color: #005bbf; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .mode-pill.disabled { opacity: 0.4; cursor: not-allowed; }
+        .mode-lock-indicator { font-size: 11px; color: #727785; margin-right: 8px; }
+        .mode-lock-btn { background: none; border: none; cursor: pointer; font-size: 14px; margin-left: 8px; }
+
+        /* ══════════════════════════════════════════════════════════
+           CSS VARIABLE FALLBACKS  (for dashboard.js inline styles)
+           ══════════════════════════════════════════════════════════ */
+        :root {
+            --bg-primary: #FAF9F6; --bg-secondary: #f0eee8; --bg-hover: #eae8e2;
+            --border-color: #D1CEC7; --text-primary: #1b1c18; --text-secondary: #414754;
+            --color-primary: #005bbf; --color-accent: #1a73e8; --color-danger: #ba1a1a;
+        }
+
+        /* ── Dark Mode Overrides ── */
+        html.dark {
+            --bg-primary: #1a1b1e; --bg-secondary: #2b2d31; --bg-hover: #35373b;
+            --border-color: #3f4147; --text-primary: #e4e2dc; --text-secondary: #a0a4b0;
+            --color-primary: #adc7ff; --color-accent: #7cacf8; --color-danger: #ff897d;
+        }
+        html.dark body { background-color: #1a1b1e; color: #e4e2dc; }
+        html.dark .bg-background, html.dark .bg-surface { background-color: #1a1b1e; }
+        html.dark .bg-surface-container-low, html.dark .bg-\[\#f5f3ed\] { background-color: #212225 !important; }
+        html.dark .bg-\[\#F2F0EA\] { background-color: #25262a !important; }
+        html.dark .bg-\[\#e6e4dd\] { background-color: #2b2d31 !important; }
+        html.dark .bg-\[\#fbf9f3\] { background-color: #1a1b1e !important; }
+        html.dark .bg-\[\#FAF9F6\] { background-color: #212225 !important; }
+        html.dark .bg-white, html.dark .bg-surface-container-lowest { background-color: #2b2d31 !important; }
+        html.dark .bg-white\/40, html.dark .bg-white\/50 { background-color: rgba(43,45,49,0.6) !important; }
+        html.dark .bg-surface-container-high { background-color: #35373b !important; }
+        html.dark .text-on-surface, html.dark .text-\[\#1b1c18\] { color: #e4e2dc !important; }
+        html.dark .text-on-surface-variant { color: #a0a4b0 !important; }
+        html.dark .border-\[\#D1CEC7\] { border-color: #3f4147 !important; }
+        html.dark .glass-panel { backdrop-filter: blur(20px); background: rgba(26, 27, 30, 0.85); }
+        html.dark .message-user { background: #3d6cb5; }
+        html.dark .message-assistant { background: #2b2d31; border-color: rgba(63,65,71,0.5); }
+        html.dark .message-system { background: #332d1a; border-color: #665a2e; }
+        html.dark .action-card { background: #2b2d31; border-color: #3f4147; }
+        html.dark .action-card-header { background: #35373b; }
+        html.dark .assistant-input-wrap { background: #2b2d31; border-color: rgba(63,65,71,0.3); }
+        html.dark .result-card.success { background: #1a2e1a; border-color: #2d5a2d; }
+        html.dark .result-card.failure { background: #2e1a1a; border-color: #5a2d2d; }
+
+        /* ══════════════════════════════════════════════════════════
+           ASSISTANT UI  —  dynamically injected by dashboard.js
+           ══════════════════════════════════════════════════════════ */
+        .assistant-workspace { display:flex; flex-direction:column; height:100%; position:relative; overflow:hidden; }
+        .assistant-scroll { flex:1; overflow-y:auto; padding-top:3rem; padding-bottom:14rem; min-height:0; }
+        .assistant-hero { display:flex; flex-direction:column; align-items:center; text-align:center; gap:1rem; margin-bottom:3rem; }
+        .assistant-hero h2 { font-family:'Newsreader','Playfair Display',serif; font-size:2.25rem; font-style:italic; display:flex; align-items:center; gap:0.75rem; }
+        .assistant-chat-feed { display:flex; flex-direction:column; gap:2.5rem; }
+        .assistant-bottom { position:absolute; bottom:0; left:0; right:0; z-index:40; padding:3rem 0 2.5rem; pointer-events:none; background:linear-gradient(to top, #fbf9f3 60%, transparent); }
+        .assistant-bottom-inner { max-width:48rem; margin:0 auto; padding:0 1.5rem; pointer-events:auto; }
+        .assistant-input-wrap { display:flex; align-items:center; background:#ffffff; border:1px solid rgba(193,198,214,0.3); border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.04); padding:6px; overflow:hidden; }
+        .assistant-input-wrap:focus-within { box-shadow: 0 4px 12px rgba(0,91,191,0.12); border-color: rgba(0,91,191,0.3); }
+        .assistant-input { flex:1; background:transparent; border:none; outline:none; padding:12px 8px; font-size:14px; color:#1b1c18; }
+        .assistant-send-btn { background:#005bbf; color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.1em; cursor:pointer; transition:all 0.2s; }
+        .assistant-send-btn:hover { opacity:0.9; }
+
+        /* ── Chat message bubbles (Assistant workspace — dashboard.js) ── */
+        .chat-message { margin-bottom:0.5rem; font-size:14px; line-height:1.65; }
+        .chat-message.user { display:flex; justify-content:flex-end; }
+        .chat-message.user > .msg-bubble { background:#FAF9F6; padding:1.25rem; border-radius:0.75rem; border:1px solid #D1CEC7; box-shadow:0 2px 8px rgba(0,0,0,0.03); max-width:85%; }
+        .chat-message.assistant { display:flex; justify-content:flex-start; gap:1rem; }
+        .chat-message.assistant > .msg-bubble { background:#FAF9F6; padding:1.25rem; border-radius:0.75rem; border:1px solid rgba(255,255,255,0.5); box-shadow:0 4px 20px -4px rgba(0,0,0,0.05); max-width:90%; }
+        .chat-message .assistant-avatar { width:2rem; height:2rem; border-radius:4px; background:#005bbf; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:4px; }
+        .chat-message .assistant-avatar .material-symbols-outlined { color:white; font-size:1rem; }
+
+        /* Provider badges */
+        .provider-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; font-family:'JetBrains Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:0.05em; font-weight:700; background:#f0eee8; border:1px solid #D1CEC7; border-radius:9999px; color:#414754; opacity:0.4; }
+        .provider-badge.connected { opacity:1; }
+        .provider-badge.connected::before { content:''; width:6px; height:6px; border-radius:50%; background:#10b981; }
+
+        /* Quick-action chips */
+        .quick-action-chip { flex-shrink:0; display:flex; align-items:center; gap:8px; padding:6px 16px; background:#FAF9F6; border:1px solid #D1CEC7; border-radius:9999px; font-size:10px; font-weight:700; color:#414754; text-transform:uppercase; letter-spacing:-0.02em; cursor:pointer; transition:all 0.2s; }
+        .quick-action-chip:hover { background:#eae8e2; }
+
+        /* Action cards / Result cards / Recommendation cards */
+        .action-card { background:#fff; border:1px solid #D1CEC7; border-radius:8px; margin-bottom:12px; overflow:hidden; }
+        .action-card-header { display:flex; justify-content:space-between; align-items:center; padding:8px 16px; background:#eae8e2; border-bottom:1px solid rgba(193,198,214,0.15); }
+        .action-intent-badge { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#414754; }
+        .action-card-body { padding:16px; }
+        .action-summary { font-weight:500; margin-bottom:8px; }
+        .action-params { display:flex; flex-direction:column; gap:4px; }
+        .action-param { display:flex; gap:8px; font-size:13px; }
+        .action-param-label { font-weight:600; color:#414754; min-width:60px; }
+        .action-param-value { color:#1b1c18; }
+        .action-card-actions { display:flex; gap:8px; padding:12px 16px; border-top:1px solid rgba(193,198,214,0.1); flex-wrap:wrap; }
+        .btn-approve { background:#005bbf; color:white; border:none; padding:8px 16px; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s; }
+        .btn-approve:hover { opacity:0.9; }
+        .btn-edit { background:#eae8e2; color:#1b1c18; border:1px solid #D1CEC7; padding:8px 16px; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s; }
+        .btn-edit:hover { background:#dcdad4; }
+        .btn-cancel { background:transparent; color:#ba1a1a; border:none; padding:8px 16px; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s; }
+        .btn-cancel:hover { background:rgba(186,26,26,0.05); }
+        .result-card { padding:16px; border-radius:8px; margin-bottom:12px; border:1px solid; }
+        .result-card.success { background:#f0fdf4; border-left:4px solid #10b981; border-color:#d1fae5; }
+        .result-card.failure { background:#fef2f2; border-left:4px solid #ef4444; border-color:#fee2e2; }
+        .result-status { font-weight:700; font-size:13px; margin-bottom:4px; }
+        .recommendation-card { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:12px; margin-bottom:8px; }
+        .recommendation-kind { font-weight:600; font-size:13px; margin-bottom:4px; }
+        .recommendation-reason { font-size:13px; color:#414754; }
+        .btn-accept { background:#005bbf; color:white; border:none; padding:6px 12px; border-radius:4px; font-size:12px; cursor:pointer; }
+        .btn-dismiss { background:#eae8e2; color:#1b1c18; border:none; padding:6px 12px; border-radius:4px; font-size:12px; cursor:pointer; }
+        .confidence-bar { height:4px; background:#eae8e2; border-radius:2px; margin-top:6px; }
+        .confidence-fill { height:100%; border-radius:2px; transition:width 0.3s; }
+        .confidence-fill.high { background:#10b981; } .confidence-fill.medium { background:#f59e0b; } .confidence-fill.low { background:#ef4444; }
+
+        /* Typing indicator */
+        .typing-indicator { display:flex; gap:4px; padding:12px; }
+        .typing-dot { width:8px; height:8px; border-radius:50%; background:#c1c6d6; animation:typing-bounce 1.4s infinite ease-in-out; }
+        .typing-dot:nth-child(2) { animation-delay:0.2s; } .typing-dot:nth-child(3) { animation-delay:0.4s; }
+        @keyframes typing-bounce { 0%,80%,100% { transform:scale(0.6); opacity:0.4; } 40% { transform:scale(1); opacity:1; } }
+
+        /* Edit overlay/modal */
+        .edit-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:100; display:flex; align-items:center; justify-content:center; }
+        .edit-modal { background:#fff; border-radius:12px; padding:24px; width:90%; max-width:500px; box-shadow:0 20px 60px rgba(0,0,0,0.15); }
+        .edit-modal h3 { font-family:'Newsreader',serif; font-size:1.25rem; font-style:italic; margin-bottom:16px; }
+        .edit-field { margin-bottom:12px; }
+        .edit-field label { display:block; font-size:12px; font-weight:600; color:#414754; margin-bottom:4px; text-transform:capitalize; }
+        .edit-field input, .edit-field textarea { width:100%; padding:8px 12px; border:1px solid #D1CEC7; border-radius:6px; font-size:14px; background:#FAF9F6; }
+        .edit-field textarea { min-height:100px; resize:vertical; }
+        .edit-modal-actions { display:flex; gap:8px; margin-top:16px; justify-content:flex-end; }
+
+        /* ── Notebook Message Styles (chat.js) ── */
+        .nb-msg-wrapper { margin-bottom:2rem; }
+        .nb-msg-wrapper.user-wrapper { display:flex; flex-direction:column; align-items:flex-end; gap:0.5rem; margin-left:auto; max-width:80%; }
+        .nb-msg-wrapper.assistant-wrapper { display:flex; flex-direction:column; gap:0.5rem; max-width:85%; }
+        .nb-msg-wrapper.system-wrapper { max-width:90%; margin:0 auto; }
+        .nb-msg-label { font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.12em; font-weight:700; color:#005bbf; }
+        .nb-msg-timestamp { font-family:'JetBrains Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:0.12em; color:#727785; padding-right:0.5rem; }
+
+        .message { font-size:14px; line-height:1.65; }
+        .message-user { background:#005bbf; color:white; padding:1.25rem; border-radius:1rem; border-top-right-radius:0; box-shadow:0 4px 12px rgba(0,91,191,0.15); }
+        .message-assistant { background:#FAF9F6; padding:1.5rem; border-radius:1rem; border-top-left-radius:0; border:1px solid rgba(255,255,255,0.5); box-shadow:0 4px 20px -4px rgba(0,0,0,0.05); }
+        .message-system { background:#fffbeb; border:1px solid #fde68a; text-align:center; margin:0 auto; font-size:13px; padding:0.75rem 1.25rem; border-radius:0.75rem; }
+        .message h2 { font-family:'Newsreader','Playfair Display',serif; font-size:1.5rem; font-style:italic; margin-bottom:0.75rem; color:#1b1c18; }
+        .message h3 { font-family:'Newsreader','Playfair Display',serif; font-size:1.25rem; font-style:italic; margin-bottom:0.5rem; color:#1b1c18; }
+        .message h4 { font-size:1rem; font-weight:600; margin-bottom:0.5rem; color:#1b1c18; }
+        .message code { font-family:'JetBrains Mono',monospace; font-size:12px; background:#eae8e2; padding:2px 6px; border-radius:4px; }
+        .message strong { font-weight:600; }
+        .message em { font-style:italic; }
+        .message ul, .message ol { padding-left:1.5rem; margin:0.5rem 0; }
+        .message li { margin-bottom:0.25rem; }
+        .sources-list-item { font-size:11px; color:#727785; margin-top:8px; font-family:'JetBrains Mono',monospace; }
+        .message-actions { display:flex; gap:8px; margin-top:10px; }
+        .msg-action-btn { background:none; border:none; cursor:pointer; font-size:12px; color:#727785; transition:color 0.2s; }
+        .msg-action-btn:hover { color:#005bbf; }
+        .feedback-sent { opacity:0.4; }
+        .follow-up-chips { display:flex; gap:8px; flex-wrap:wrap; margin-top:0.5rem; }
+        .follow-up-chip { padding:6px 14px; background:#f5f3ed; border:1px solid rgba(193,198,214,0.15); border-radius:9999px; font-size:12px; color:#005bbf; cursor:pointer; transition:all 0.2s; }
+        .follow-up-chip:hover { background:#eae8e2; }
+
+        /* Evidence panel */
+        .evidence-section { margin-top:12px; }
+        .evidence-toggle { background:none; border:none; cursor:pointer; font-size:12px; color:#005bbf; font-weight:600; }
+        .evidence-panel { margin-top:8px; } .evidence-panel.hidden { display:none; }
+        .evidence-header { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+        .evidence-confidence { font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px; }
+        .evidence-confidence.high { background:#dcfce7; color:#166534; }
+        .evidence-confidence.medium { background:#fef3c7; color:#92400e; }
+        .evidence-confidence.low { background:#fee2e2; color:#991b1b; }
+        .evidence-count { font-size:11px; color:#727785; }
+        .evidence-chunk { background:#FAF9F6; border:1px solid #eae8e2; border-radius:6px; padding:10px; margin-bottom:6px; }
+        .evidence-chunk-header { display:flex; justify-content:space-between; margin-bottom:6px; }
+        .evidence-chunk-source { font-size:11px; font-weight:600; color:#005bbf; }
+        .evidence-chunk-score { font-size:11px; font-weight:600; color:#10b981; }
+        .evidence-chunk-text { font-size:12px; color:#414754; font-style:italic; line-height:1.5; }
+        .evidence-chunk-actions { display:flex; gap:6px; margin-top:8px; }
+        .btn.btn-small { padding:4px 10px; font-size:11px; background:#eae8e2; border:none; border-radius:4px; cursor:pointer; color:#1b1c18; }
+        .btn.btn-small:hover { background:#dcdad4; }
+
+        /* History items */
+        .history-item { cursor:pointer; transition:all 0.15s; position:relative; padding:10px 12px; border-radius:8px; }
+        .history-item:hover { background-color:#eae8e2; }
+        .history-item.active { background:#ffffff; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+        .history-item-content { display:flex; flex-direction:column; gap:2px; }
+        .history-item-title { font-size:13px; font-weight:500; color:#1b1c18; }
+        .history-item-timestamp { font-size:10px; font-family:'JetBrains Mono',monospace; color:#727785; }
+        .history-item .history-item-delete { opacity:0; transition:opacity 0.2s; background:none; border:none; cursor:pointer; position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:1.1em; }
+        .history-item:hover .history-item-delete { opacity:1; }
+        .history-group-title { font-size:10px; font-family:'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:0.1em; color:#727785; padding:8px 12px 4px; }
+        .history-empty { text-align:center; padding:2rem 1rem; color:#727785; }
+        .history-empty-icon { font-size:2rem; margin-bottom:0.5rem; }
+        .history-empty-text { font-size:12px; }
+
+        /* Source items */
+        .source-item { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:8px; transition:all 0.15s; cursor:pointer; }
+        .source-item:hover { background:#eae8e2; }
+        .source-info { min-width:0; }
+        .source-delete-btn { opacity:0; background:none; border:none; cursor:pointer; font-size:1.1rem; color:#ba1a1a; transition:opacity 0.2s; }
+        .source-item:hover .source-delete-btn { opacity:1; }
+
+        /* Audio sync */
+        .transcript-sentence { cursor:pointer; display:inline; transition:background-color 0.2s; border-radius:2px; padding:0 2px; }
+        .transcript-sentence:hover { background-color:#e0e0e0; color:#000; }
+        .transcript-sentence.active { background-color:#ffd54f; color:#000; font-weight:500; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body h-screen flex flex-col overflow-hidden">
+<div id="app" class="h-full flex flex-col">
+
+    <!-- ══════════════════════════════════════════════════════════
+         TOP NAV BAR  (Shared across both workspaces)
+         ══════════════════════════════════════════════════════════ -->
+    <header id="top-bar" class="flex justify-between items-center w-full px-6 py-3 sticky top-0 z-50 bg-[#fbf9f3] dark:bg-slate-900">
+        <div class="flex items-center gap-8">
+            <span class="text-2xl font-headline italic text-[#1b1c18] dark:text-slate-100">V.NOTEBOOK</span>
+            <nav class="flex gap-6">
+                <button id="btn-notebook" data-workspace="notebook"
+                        class="text-primary font-bold border-b-2 border-primary pb-1 transition-colors">V.NB</button>
+                <button id="btn-assistant" data-workspace="assistant"
+                        class="text-[#1b1c18]/60 font-medium hover:text-primary transition-colors pb-1 border-b-2 border-transparent">V.ASSISTANT</button>
+            </nav>
+        </div>
+        <div class="flex items-center gap-4">
+            <select id="session-intent" class="text-xs font-mono font-medium p-1.5 rounded bg-surface-container-low border border-outline-variant/30 text-on-surface hidden">
+                <option value="Explore">Explore</option><option value="Revise">Revise</option>
+                <option value="Prepare">Prepare</option><option value="Decide">Decide</option>
+            </select>
+            <label class="flex items-center gap-2 cursor-pointer text-[#1b1c18]/60 font-medium text-sm hover:text-primary transition-colors">
+                <input type="checkbox" id="do-not-learn-flag" class="rounded-sm border-outline-variant text-primary focus:ring-0 w-3 h-3"/>
+                <span>Do not learn</span>
+            </label>
+            <button id="btn-new-chat"
+                    class="bg-primary-container text-on-primary-container px-4 py-1.5 rounded-lg font-medium shadow-sm active:opacity-80 active:scale-95 transition-all text-sm">+ New Chat</button>
+            <div class="flex gap-2 ml-4">
+                <button id="theme-btn" class="material-symbols-outlined cursor-pointer text-on-surface-variant p-2 hover:bg-surface-container-high rounded-full transition-colors" data-icon="dark_mode">dark_mode</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════════
+         WORKSPACE: NOTEBOOK  (3-column grid)
+         ══════════════════════════════════════════════════════════ -->
+    <main id="workspace-notebook" class="flex-1 overflow-hidden bg-surface-container-low workspace active">
+        <div class="grid grid-cols-[250px_1fr_280px] h-full grid-layout">
+
+            <!-- ── Column 1: Sources & History ── -->
+            <aside class="col-left flex flex-col h-full bg-[#f5f3ed] dark:bg-slate-800/50 border-r border-[#D1CEC7]">
+                <div class="p-6 pb-2">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-lg font-headline text-[#1b1c18] dark:text-slate-100">V.NB</span>
+                    </div>
+                    <p class="font-mono text-[10px] uppercase text-[#1b1c18]/70 tracking-widest">Digital Archive</p>
+                </div>
+
+                <!-- Tab Switcher -->
+                <div class="flex px-4 mt-4 gap-1">
+                    <button id="tab-btn-sources" class="tab-btn active flex-1 py-2 text-center font-mono text-[10px] uppercase rounded-t-lg">Sources</button>
+                    <button id="tab-btn-history" class="tab-btn flex-1 py-2 text-center font-mono text-[10px] uppercase text-[#1b1c18]/70 hover:bg-[#eae8e2] rounded-t-lg transition-all">History</button>
+                </div>
+
+                <!-- Panels -->
+                <div class="flex-1 overflow-hidden relative">
+                    <div id="panel-sources" class="absolute inset-0 sidebar-panel active custom-scrollbar">
+                        <div id="sources-list" class="flex-1 overflow-y-auto p-4 space-y-4">
+                            <p class="text-[12px] text-on-surface-variant text-center mt-4">No sources uploaded.</p>
+                        </div>
+                    </div>
+                    <div id="panel-history" class="absolute inset-0 sidebar-panel custom-scrollbar">
+                        <div id="history-list" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
+                    </div>
+                </div>
+
+                <!-- Upload Button -->
+                <div class="p-4 border-t border-[#D1CEC7] bg-[#f5f3ed]">
+                    <button id="btn-upload"
+                            class="w-full flex items-center justify-center gap-2 py-3 bg-surface-container-lowest border border-dashed border-outline-variant text-primary font-medium hover:bg-white hover:border-primary transition-all rounded-lg">
+                        <span class="material-symbols-outlined text-sm" data-icon="upload_file">upload_file</span>
+                        <span class="text-xs uppercase font-mono tracking-tight">Upload PDF</span>
+                    </button>
+                    <input type="file" id="file-upload" accept="application/pdf" hidden/>
+                </div>
+            </aside>
+
+            <!-- ── Column 2: Chat Canvas ── -->
+            <section class="flex flex-col h-full min-h-0 bg-[#F2F0EA]" id="chat-container">
+                <!-- Mode Selector -->
+                <div class="flex justify-center p-4 border-b border-[#D1CEC7]/30 bg-white/50 backdrop-blur-md">
+                    <div id="mode-selector" class="inline-flex p-1 bg-surface-container-high rounded-full gap-1">
+                        <!-- Dynamically injected by chat.js -->
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div id="chat-messages" class="flex-1 overflow-y-auto min-h-0 custom-scrollbar p-8 space-y-8">
+                    <!-- Welcome Block -->
+                    <div class="flex flex-col gap-2 max-w-[85%]">
+                        <div class="bg-[#FAF9F6] p-8 rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-white/50 text-center">
+                            <h2 class="font-headline text-3xl text-on-surface mb-3 italic">Welcome to your Digital Workspace.</h2>
+                            <p class="text-on-surface-variant leading-relaxed max-w-lg mx-auto">Upload a document to the archive or select an existing session to begin your research.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Area -->
+                <div id="chat-input-area" class="p-6 bg-white/40 backdrop-blur-lg border-t border-[#D1CEC7]/30">
+                    <div class="max-w-4xl mx-auto relative bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/20 focus-within:ring-2 ring-primary/10 transition-all p-2">
+                        <textarea id="chat-input"
+                                  class="w-full bg-transparent border-none focus:ring-0 text-on-surface placeholder-on-surface-variant/50 p-3 resize-none custom-scrollbar"
+                                  placeholder="Ask your digital archive anything..." rows="3"></textarea>
+                        <div class="flex justify-between items-center px-3 pb-2 pt-1 border-t border-surface-container">
+                            <div class="flex gap-2">
+                                <button id="btn-attach-file" class="p-2 text-on-surface-variant hover:text-primary transition-colors" title="Attach PDF">
+                                    <span class="material-symbols-outlined text-xl" data-icon="attach_file">attach_file</span>
+                                </button>
+                                <button id="btn-voice-input" class="p-2 text-on-surface-variant hover:text-primary transition-colors" title="Voice input">
+                                    <span class="material-symbols-outlined text-xl" data-icon="mic">mic</span>
+                                </button>
+                            </div>
+                            <button id="chat-send-btn"
+                                    class="bg-primary hover:bg-primary-container text-white px-6 py-2 rounded-xl font-medium transition-all flex items-center gap-2 group shadow-md shadow-primary/20">
+                                <span>Send</span>
+                                <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform" data-icon="send">send</span>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-center text-[10px] text-on-surface-variant/40 mt-4 font-mono uppercase tracking-widest">Digital Archivist Engine</p>
+                </div>
+            </section>
+
+            <!-- ── Column 3: Studio & Metadata ── -->
+            <aside class="col-right flex flex-col h-full bg-[#e6e4dd] border-l border-[#D1CEC7] overflow-y-auto custom-scrollbar">
+                <!-- Studio -->
+                <div class="p-6">
+                    <h3 class="font-headline text-xl text-on-surface mb-4 italic">Studio</h3>
+                    <div id="studio-grid" class="grid grid-cols-3 gap-3">
+                        <button class="studio-card group flex flex-col items-center justify-center p-3 aspect-square bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                                onclick="StudioUI.generateAudio()">
+                            <span class="material-symbols-outlined text-primary mb-2" data-icon="audio_file">audio_file</span>
+                            <span class="label text-[9px] font-mono uppercase text-on-surface-variant group-hover:text-primary transition-colors">Audio</span>
+                        </button>
+                        <button class="studio-card group flex flex-col items-center justify-center p-3 aspect-square bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                                onclick="StudioUI.generateVideo()">
+                            <span class="material-symbols-outlined text-primary mb-2" data-icon="video_library">video_library</span>
+                            <span class="label text-[9px] font-mono uppercase text-on-surface-variant group-hover:text-primary transition-colors">Video</span>
+                        </button>
+                        <button class="studio-card group flex flex-col items-center justify-center p-3 aspect-square bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                                onclick="StudioUI.generateMindMap()">
+                            <span class="material-symbols-outlined text-primary mb-2" data-icon="account_tree">account_tree</span>
+                            <span class="label text-[9px] font-mono uppercase text-on-surface-variant group-hover:text-primary transition-colors">Mind Map</span>
+                        </button>
+                        <button class="studio-card group flex flex-col items-center justify-center p-3 aspect-square bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                                onclick="StudioUI.generateReport()">
+                            <span class="material-symbols-outlined text-primary mb-2" data-icon="history_edu">history_edu</span>
+                            <span class="label text-[9px] font-mono uppercase text-on-surface-variant group-hover:text-primary transition-colors">Draft</span>
+                        </button>
+                        <button class="studio-card group flex flex-col items-center justify-center p-3 aspect-square bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                                onclick="StudioUI.generateQuiz()">
+                            <span class="material-symbols-outlined text-primary mb-2" data-icon="quiz">quiz</span>
+                            <span class="label text-[9px] font-mono uppercase text-on-surface-variant group-hover:text-primary transition-colors">Quiz</span>
+                        </button>
+                        <button class="studio-card group flex flex-col items-center justify-center p-3 aspect-square bg-white rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                                onclick="StudioUI.generateFlashcards()">
+                            <span class="material-symbols-outlined text-primary mb-2" data-icon="summarize">summarize</span>
+                            <span class="label text-[9px] font-mono uppercase text-on-surface-variant group-hover:text-primary transition-colors">Brief</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Audio Player -->
+                <div id="audio-player-container" class="hidden p-4 mx-6 mb-4 bg-white rounded-xl shadow-sm border border-outline-variant/10"></div>
+
+                <!-- Active Goals -->
+                <div class="px-6 py-4 mt-2">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-headline text-xl text-on-surface italic">Active Goals</h3>
+                        <span class="material-symbols-outlined text-on-surface-variant/40 cursor-pointer" data-icon="more_horiz">more_horiz</span>
+                    </div>
+                    <div id="goals-list" class="space-y-3">
+                        <p class="text-[11px] text-on-surface-variant font-mono">No active goals.</p>
+                    </div>
+                </div>
+
+                <!-- Flashcards -->
+                <div class="px-6 py-6 flex-1 flex flex-col justify-end">
+                    <div id="flashcard-container" class="flex flex-col gap-3">
+                        <div class="bg-primary/5 rounded-2xl border-2 border-dashed border-primary/20 p-6 text-center">
+                            <span class="material-symbols-outlined text-primary text-3xl mb-3" data-icon="style" style="font-variation-settings: 'FILL' 1;">style</span>
+                            <p class="text-sm font-medium text-on-surface mb-4">Ready to test your knowledge?</p>
+                            <button onclick="StudioUI.generateFlashcards()" class="w-full py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-container transition-all shadow-lg shadow-primary/10">
+                                Generate flashcards
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="p-6 border-t border-[#D1CEC7]/50 mt-4">
+                    <div class="flex items-center gap-4 text-on-surface-variant/60">
+                        <span class="material-symbols-outlined text-sm cursor-pointer hover:text-primary transition-colors" data-icon="help">help</span>
+                        <span class="material-symbols-outlined text-sm cursor-pointer hover:text-primary transition-colors" data-icon="shield">shield</span>
+                        <span class="material-symbols-outlined text-sm cursor-pointer hover:text-primary transition-colors" data-icon="share">share</span>
+                        <div class="ml-auto flex items-center gap-1 opacity-50">
+                            <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                            <span id="status-indicator" class="text-[9px] font-mono uppercase">V.NOTEBOOK Synced</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- ══════════════════════════════════════════════════════════
+         WORKSPACE: ASSISTANT  (Centered single-column)
+         dashboard.js replaces this content via init()
+         ══════════════════════════════════════════════════════════ -->
+    <main id="workspace-assistant" class="flex-1 overflow-hidden relative bg-background workspace">
+        <!-- Placeholder — AssistantUI.init() replaces innerHTML -->
+    </main>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCRIPTS
+     ══════════════════════════════════════════════════════════ -->
+<script src="js/state.js?v=5"></script>
+<script src="js/api.js?v=4"></script>
+<script src="js/router.js?v=3"></script>
+<script src="js/sidebar.js?v=2"></script>
+
+<!-- Notebook -->
+<script src="js/notebook/chat.js?v=7"></script>
+<script src="js/notebook/modes.js?v=2"></script>
+<script src="js/notebook/sources.js?v=2"></script>
+<script src="js/notebook/flashcards.js?v=2"></script>
+<script src="js/notebook/history.js?v=4"></script>
+<script src="js/notebook/audio-player.js?v=2"></script>
+<script src="js/notebook/goals.js?v=5"></script>
+<script src="js/notebook/studio.js?v=3"></script>
+<script src="js/notebook/notes.js?v=2"></script>
+
+<!-- Assistant -->
+<script src="js/assistant/dashboard.js?v=4"></script>
+
+<!-- Main App -->
+<script src="js/app.js?v=5"></script>
+</body>
+</html>

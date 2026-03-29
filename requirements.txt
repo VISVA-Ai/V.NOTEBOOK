@@ -1,0 +1,21 @@
+fastapi
+uvicorn
+python-dotenv
+groq
+sentence-transformers
+faiss-cpu
+pypdf
+networkx
+matplotlib
+SpeechRecognition
+duckduckgo-search
+pydantic
+requests
+python-multipart
+# If Tavily is added
+tavily-python
+
+# Google APIs (Gmail & Calendar)
+google-api-python-client>=2.100.0
+google-auth-httplib2>=0.1.1
+google-auth-oauthlib>=1.1.0
