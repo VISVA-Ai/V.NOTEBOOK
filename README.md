@@ -11,7 +11,6 @@
     with a controlled execution engine for real-world actions.
   </p>
 
-  <!-- IMPORTANT: Place a nice wide screenshot of your app here and name it "notebook-ui.png" inside an "assets" folder. -->
   <img src="assets/notebook-ui.png" alt="V.NOTEBOOK Interface Screenshot" width="1000">
 </div>
 
@@ -19,7 +18,7 @@
 
 ## 📖 Overview
 
-**V.NOTEBOOK** is a full-stack AI workspace built from the ground up. It pairs a comprehensive research notebook (for uploading, querying, and analyzing documents via Retrieval-Augmented Generation) with **V.ASSISTANT** — a controlled execution system connecting directly to Gmail, Google Calendar, and WhatsApp. 
+**V.NOTEBOOK** is a full-stack AI workspace built from the ground up. It pairs a comprehensive research notebook (for uploading, querying, and analyzing documents via Retrieval-Augmented Generation) with **V.ASSISTANT** — a controlled execution system connecting directly to Gmail, Google Calendar, and WhatsApp.
 
 Crucially, it utilizes **mandatory human approval** before execution, ensuring that the AI assists you safely without making unauthorized decisions.
 
@@ -40,6 +39,9 @@ The project demonstrates advanced AI/ML engineering concepts including semantic 
 | 🎯 **Goal Tracking** | Persistent sessions featuring automatic goal inference and progression from conversation context. |
 | 🎙️ **Studio Tools** | Includes audio overview generation, auto-generated flashcards, mind maps, quizzes, and exports. |
 | 🧠 **Cognitive Layer** | Features feedback memory, cross-session insight extraction, and progressive preference learning. |
+| 🔑 **Multi-Provider LLM** | Supports OpenAI, Anthropic (Claude), Google (Gemini), and Groq — switch models with one click. |
+| 🔐 **1-Click Google OAuth** | Browser-based "Sign in with Google" — no manual credential file setup required. |
+| ⚙️ **Settings Dashboard** | Full UI for API keys, model selection, memory stats, and integration management. |
 
 <br>
 
@@ -57,11 +59,10 @@ The project demonstrates advanced AI/ML engineering concepts including semantic 
 
 ### Backend Infrastructure
 *   **Python 3.10+ & FastAPI**: Asynchronous API server with integrated lifespan events.
-*   **Groq API (Llama-3.3-70b)**: Primary, high-speed LLM inference.
-*   **OpenRouter**: Automatic failover configuration when primary API keys are exhausted.
+*   **LiteLLM**: Universal LLM router — dynamically routes requests to OpenAI, Anthropic, Google Gemini, Groq, and 100+ providers via a single interface.
 *   **Sentence Transformers & FAISS**: Core pipeline for document embedding and rapid vector similarity search.
 *   **NetworkX**: Applied for sophisticated knowledge graph construction.
-*   **Google OAuth 2.0 APIs**: Secured endpoints for Gmail and Google Calendar handling.
+*   **Google OAuth 2.0 APIs**: 1-click browser-based OAuth flow for Gmail and Google Calendar.
 *   **DuckDuckGo Search**: Web search module specifically empowering Deep Research mode.
 *   **SpeechRecognition**: Real-time audio transcription capabilities.
 
@@ -115,17 +116,32 @@ graph TD;
   Audit Log             ── Resolves and records the result with timestamp & status
 ```
 
+### Multi-Provider LLM Routing
+```mermaid
+graph LR;
+    A[User Prompt] --> B[LiteLLM Router]
+    B --> C{Provider Prefix}
+    C -->|groq/| D[Groq - Llama 3.3 70B]
+    C -->|gemini/| E[Google Gemini Pro]
+    C -->|openai/| F[OpenAI GPT-4o]
+    C -->|anthropic/| G[Anthropic Claude]
+    B --> H[Dynamic API Key from .env]
+```
+
 ---
 
 ## 🚀 Setup & Installation
 
 ### Prerequisites
 *   Python `3.10+` minimum.
-*   An LLM API Key (Free tier at [Groq](https://console.groq.com) recommended).
-*   *(Optional)* Google Cloud project with Gmail and Calendar APIs enabled.
+*   At least one LLM API Key (free tiers available from multiple providers).
 
-> [!NOTE] 
-> **Using Other LLM Providers:** The architecture is provider-agnostic. You can easily swap groq out for OpenAI, Anthropic, or local Ollama instances by editing a single file (`backend/core/llm.py`).
+> [!TIP]
+> **Free API Key Sources:**
+> *   🟢 [Groq](https://console.groq.com) — Free, fastest inference (Llama 3.3 70B)
+> *   🔵 [Google AI Studio](https://aistudio.google.com/apikey) — Free Gemini Pro access
+> *   ⚫ [OpenAI](https://platform.openai.com/api-keys) — Pay-as-you-go GPT-4o
+> *   🟠 [Anthropic](https://console.anthropic.com/) — Pay-as-you-go Claude
 
 ### 1. Clone & Install Environment
 ```bash
@@ -134,45 +150,71 @@ cd V.NOTEBOOK
 pip install -r requirements.txt
 ```
 
-### 2. Configure Environment Variables
-Copy over the environment template to begin setup:
+### 2. Configure API Keys
+
+You can configure API keys in **two ways**:
+
+**Option A — Via the Settings UI (Recommended)**
+1.  Start the application (see Step 4).
+2.  Click the ⚙️ gear icon → **API Keys** tab.
+3.  Paste your key(s) for any provider and hit **Save**.
+
+**Option B — Via `.env` file**
 ```bash
 cp .env.example .env
 ```
-Populate `.env` with your secure keys:
 ```ini
-# Required — LLM Provider 
-GROQ_API_KEY=your_groq_api_key_here
+# Pick one or more providers
+GROQ_API_KEY=gsk_your_groq_key_here
+GEMINI_API_KEY=your_gemini_key_here
+OPENAI_API_KEY=sk-your_openai_key_here
+ANTHROPIC_API_KEY=sk-ant-your_anthropic_key_here
 
-# Optional — Additional keys for rate-limit rotation
-GROQ_API_KEY_2=your_second_key_here
-GROQ_API_KEY_3=your_third_key_here
-
-# Optional — Fallback LLM Provider
-OPENROUTER_API_KEY=your_openrouter_key_here
+# Optional
+TAVILY_API_KEY=your_tavily_key_here
 ```
 
-### 3. (Optional) Google API Credentials Setup
-To utilize advanced intelligent email and calendar actions:
+### 3. (Optional) Google API Setup — Gmail & Calendar
+
+> [!NOTE]
+> **1-Click Setup**: V.NOTEBOOK now includes a browser-based OAuth flow. No manual token management required!
+
 1.  Navigate to the [Google Cloud Console](https://console.cloud.google.com).
-2.  Enable the **Gmail API** and **Google Calendar API**.
-3.  Configure your **OAuth Consent Screen** (Desktop App).
-4.  Generate an **OAuth Client ID** and download the credential JSON.
-5.  Rename to `credentials.json` and place it natively the project root folder.
-6.  *On your first startup, a browser window will trigger for manual OAuth authorization.*
+2.  Create a project and enable the **Gmail API** and **Google Calendar API**.
+3.  Configure your **OAuth Consent Screen**.
+4.  Generate an **OAuth Client ID** (Desktop App) and download the credential JSON.
+5.  Rename it to `credentials.json` and place it in the `backend/` folder.
+6.  In the app, go to **Settings → Integrations → Sign in with Google** — done!
 
 ### 4. Run the Application
-Start the dedicated backend service:
+
+**Quick Start** (using batch files):
 ```bash
+# Terminal 1 — Backend
+run_backend.bat
+
+# Terminal 2 — Frontend
+run_frontend.bat
+```
+
+**Manual Start:**
+```bash
+# Terminal 1 — Backend
 cd backend
 uvicorn main:app --reload --port 8000
-```
-Start the frontend interface *(in a new terminal tab)*:
-```bash
+
+# Terminal 2 — Frontend
 cd frontend
 python -m http.server 3000
 ```
 Navigate to `http://localhost:3000` to interact with your workspace.
+
+### 5. Select Your Model
+Go to **Settings → Preferences** and choose your preferred model:
+- `groq/llama-3.3-70b-versatile` (default, fast, free)
+- `gemini/gemini-1.5-pro-latest` (Google, free)
+- `openai/gpt-4o` (OpenAI, paid)
+- `anthropic/claude-sonnet-4-20250514` (Anthropic, paid)
 
 ---
 
@@ -182,19 +224,25 @@ Navigate to `http://localhost:3000` to interact with your workspace.
 V.NOTEBOOK/
 ├── backend/
 │   ├── main.py                    # FastAPI unified app entry point
-│   ├── api/                       # Categorized routing endpoints
+│   ├── api/
+│   │   ├── routes_settings.py     # API key & preferences management
+│   │   ├── routes_auth.py         # Google OAuth 2.0 web flow
+│   │   ├── routes_notebook.py     # Notebook workspace endpoints
+│   │   └── routes_assistant.py    # V.ASSISTANT action endpoints
 │   ├── core/                      
 │   │   ├── engine.py              # Central orchestrator 
-│   │   ├── llm.py                 # Multi-key LLM handling wrapper 
+│   │   ├── llm.py                 # LiteLLM-powered multi-provider handler 
 │   │   ├── memory.py              # FAISS-backed vector store abstraction 
 │   │   ├── decision_engine.py     # V.ASSISTANT intent routing & handling 
 │   │   ├── executor.py            # Executable Action dispatching 
+│   │   ├── email_intelligence.py  # Gmail cognition & smart replies
 │   │   └── adapters/              # Modular API Connections (Gmail/Calendar)
 │   └── models/                    # Pydantic structured schemas
 ├── frontend/
 │   ├── index.html                 # Main SPA entry architecture
 │   ├── css/                       # Modular UI stylesheets
 │   └── js/
+│       ├── settings.js            # Settings modal (keys, prefs, integrations)
 │       ├── notebook/              # Core Notebook logic scripts
 │       └── assistant/             # V.ASSISTANT frontend modules
 ├── workflows/                     # Declarative n8n workflow templates
@@ -212,10 +260,11 @@ This platform enforces a comprehensive local security standard:
 
 | Asset | Protection Mechanism |
 | :--- | :--- |
-| **API Keys** | Secured in `.env` (automatically ignored by Git). |
-| **Provider Credentials** | Read from local `credentials.json` exclusively. |
-| **OAuth Access Tokens** | Isolated securely within `data/gmail_token.json`. |
+| **API Keys** | Secured in `.env` (Git-ignored). Masked in the Settings UI. |
+| **Provider Credentials** | Read from local `credentials.json` (Git-ignored). |
+| **OAuth Access Tokens** | Unified in `backend/token.json` (Git-ignored). |
 | **Private Chat Sessions** | Constrained entirely to the local `data/` directory. |
+| **PKCE State** | Ephemeral `_oauth_pkce_state.json` (auto-cleaned, Git-ignored). |
 
 ---
 
@@ -224,18 +273,19 @@ This platform enforces a comprehensive local security standard:
 *   **RAG Engineering**: End-to-end multi-pipeline embedding and retrieval with FAISS and dynamic system context injection.
 *   **Semantic Routing**: Categorizes complex natural intent across completely different operational domains (Notebook vs. Assistant vs. Search).
 *   **Agentic Function Calling**: Employs deterministic generation, effectively wrapping the LLM behavior to write to local execution queues.
+*   **Multi-Provider LLM Routing**: Dynamic model switching via LiteLLM — supports 100+ providers through a single `completion()` interface.
 *   **Idempotent Queue Management**: Guarantees zero double-submissions or crashes through atomic JSON state transitions (`Pending` → `Approved` → `Executed`).
 *   **Human-in-the-Loop (HITL)**: Prioritizes absolute user supremacy over AI autonomy via the mandatory visual preview card approvals.
 *   **Cognitive Learning Subsystem**: Runs isolated analysis tasks across legacy chat sessions to progressively update and adapt user personas.
-*   **Intelligent Key Fallbacks**: Programmed grace degradation across exhausted API keys seamlessly jumping API providers on the backend.
+*   **OAuth 2.0 with PKCE**: Full browser-based Google OAuth flow with disk-persisted code verifiers, supporting both `installed` and `web` client types.
 
 ---
 
 ## 📋 Known Limitations
 
-*   **Settings Interface**: The header's settings gear icon and profile avatar remain aesthetic UI placeholders.
 *   **WhatsApp Handling**: The existing WhatsApp adapter requires active Meta Business API validation; it defaults to disabled.
 *   **Studio Modules**: Audio capabilities require active TTS integrations; video and mindmapping exist as stub architectures for future scaling.
+*   **OAuth Scope**: Google sign-in currently supports Gmail and Calendar. Drive integration is planned.
 
 ---
 
