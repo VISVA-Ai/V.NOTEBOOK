@@ -15,6 +15,7 @@ const App = {
         if (window.FlashcardsUI) FlashcardsUI.init();
         if (window.HistoryUI) HistoryUI.init();
         if (window.StudioUI) StudioUI.init();
+        if (window.SettingsUI) SettingsUI.init();
 
         // 3. Initialize Router & Bind Global Events (Immediate response)
         Router.init();

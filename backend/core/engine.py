@@ -151,7 +151,7 @@ class Engine:
         if progress_callback: progress_callback(1.0)
         return f"Processed {total_chunks} chunks."
         
-    def query(self, user_query, mode="Fast Mode", model="llama-3.3-70b-versatile", chat_history=None, session_id=None, intent="Explore", do_not_learn=False):
+    def query(self, user_query, mode="Fast Mode", model=None, chat_history=None, session_id=None, intent="Explore", do_not_learn=False):
         """
         Main query pipeline following the Prompt Constitution.
         """
@@ -191,7 +191,7 @@ class Engine:
         sources = []
         if mode == "Grounded Mode":
             # Step 1: Broad retrieval (Reduced to k=10 to prevent hitting Groq TPM limits)
-            results = self.memory.retrieve(user_query, k=10)
+            results = self.memory.retrieve(user_query, k=10, session_id=session_id)
             if not results:
                 return json.dumps({
                     "summary": "No sufficient sources found. Please upload documents or adjust your query.",
@@ -273,7 +273,7 @@ Your response must follow this exact schema:
         """Generates flashcards based on recent conversation or uploaded documents."""
         # 1. Gather Context
         # Try to retrieve from memory first (documents)
-        results = self.memory.retrieve("summary", k=5)
+        results = self.memory.retrieve("summary", k=5, session_id=session_id)
         context = ""
         if results:
             context = "\n".join([r['text'] for r in results])
@@ -307,12 +307,179 @@ Your response must follow this exact schema:
         return {"cards": [{"front": "Error generating", "back": "Please try again."}]}
 
 
+    def generate_quiz(self, session_id: str):
+        """Generates an interactive multiple-choice quiz based on uploaded documents."""
+        results = self.memory.retrieve("summary key concepts definitions", k=10, session_id=session_id)
+        context = ""
+        if results:
+            context = "\n".join([r['text'] for r in results])
+        
+        if not context:
+            return {"questions": [{"question": "No content found", "options": ["Upload a document first"], "correct": 0, "explanation": "Please upload a document to generate a quiz."}]}
+
+        prompt = (
+            f"Generate 5 challenging multiple-choice quiz questions based on the following content. "
+            f"Each question should test understanding, not just recall. "
+            f"Format as JSON array: ["
+            f'{{"question": "Question text?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct": 0, "explanation": "Why this answer is correct.", "difficulty": "easy|medium|hard"}}]. '
+            f"The 'correct' field is the 0-based index of the correct option.\n\n"
+            f"Content:\n{context[:5000]}"
+        )
+        
+        response = self.llm.get_response(
+            prompt, 
+            mode="Fast Mode", 
+            system_prompt="You are an expert quiz generator. Output ONLY valid JSON containing an array of quiz question objects. No markdown formatting."
+        )
+        
+        try:
+            start = response.find('[')
+            end = response.rfind(']') + 1
+            if start != -1 and end != -1:
+                questions = json.loads(response[start:end])
+                return {"questions": questions}
+        except Exception as e:
+            print(f"Quiz generation error: {e}")
+        
+        return {"questions": [{"question": "Error generating quiz", "options": ["Please try again"], "correct": 0, "explanation": "Quiz generation failed.", "difficulty": "easy"}]}
+
+    def generate_brief(self, session_id: str):
+        """Generates an executive brief/summary from uploaded documents."""
+        results = self.memory.retrieve("summary overview key findings", k=15, session_id=session_id)
+        context = ""
+        if results:
+            context = "\n".join([r['text'] for r in results])
+        
+        if not context:
+            return {"title": "No Content", "summary": "Please upload a document to generate a brief.", "key_findings": [], "entities": [], "open_questions": []}
+
+        prompt = (
+            "Generate a comprehensive executive brief based on the following source content. "
+            "Return ONLY a JSON object (no markdown, no code fences) with this exact structure:\n"
+            '{"title": "Brief Title", "summary": "A 2-3 paragraph executive summary.", '
+            '"key_findings": ["Finding 1", "Finding 2", "Finding 3", "Finding 4", "Finding 5"], '
+            '"entities": ["Entity/Concept 1", "Entity/Concept 2", "Entity/Concept 3"], '
+            '"open_questions": ["Unanswered question 1", "Unanswered question 2"]}\n\n'
+            f"Content:\n{context[:6000]}"
+        )
+        
+        response = self.llm.get_response(
+            prompt, 
+            mode="Fast Mode", 
+            system_prompt="You are an expert research analyst. Output ONLY valid JSON. No markdown. No code fences. No explanation. Just the JSON object."
+        )
+        
+        try:
+            # Strip markdown code fences if present
+            cleaned = response.strip()
+            cleaned = cleaned.replace('```json', '').replace('```', '').strip()
+            
+            start = cleaned.find('{')
+            end = cleaned.rfind('}') + 1
+            if start != -1 and end > start:
+                brief = json.loads(cleaned[start:end])
+                # Ensure all required fields exist
+                brief.setdefault('title', 'Executive Brief')
+                brief.setdefault('summary', '')
+                brief.setdefault('key_findings', [])
+                brief.setdefault('entities', [])
+                brief.setdefault('open_questions', [])
+                return brief
+        except Exception as e:
+            print(f"Brief generation error: {e}")
+            print(f"Raw LLM response: {response[:500]}")
+        
+        # Last resort: return the raw text as the summary
+        return {
+            "title": "Document Brief", 
+            "summary": response[:2000] if response else "Failed to generate brief. Please try again.", 
+            "key_findings": [], 
+            "entities": [], 
+            "open_questions": []
+        }
+
+    def get_topics(self, session_id: str = None):
+        """Extracts key topics from uploaded documents for quiz topic selection."""
+        results = self.memory.retrieve("topics themes subjects categories", k=10, session_id=session_id)
+        context = ""
+        if results:
+            context = "\n".join([r['text'] for r in results])
+        
+        if not context:
+            return {"topics": []}
+
+        prompt = (
+            "Based on the following content, identify 5-8 distinct topics or themes covered. "
+            "Return ONLY a JSON array of topic strings. No markdown, no code fences.\n"
+            'Example: ["Sensor Technology", "Data Analysis", "Machine Learning"]\n\n'
+            f"Content:\n{context[:4000]}"
+        )
+        
+        response = self.llm.get_response(
+            prompt, 
+            mode="Fast Mode", 
+            system_prompt="You are a topic extraction AI. Output ONLY a valid JSON array of strings. No markdown. No code fences."
+        )
+        
+        try:
+            cleaned = response.strip().replace('```json', '').replace('```', '').strip()
+            start = cleaned.find('[')
+            end = cleaned.rfind(']') + 1
+            if start != -1 and end > start:
+                topics = json.loads(cleaned[start:end])
+                return {"topics": topics}
+        except Exception as e:
+            print(f"Topic extraction error: {e}")
+        
+        return {"topics": []}
+
+    def generate_quiz_with_options(self, session_id: str, topic: str = "all", num_questions: int = 5):
+        """Generates a quiz filtered by topic with configurable question count."""
+        query = f"key concepts definitions about {topic}" if topic != "all" else "summary key concepts definitions"
+        results = self.memory.retrieve(query, k=10, session_id=session_id)
+        context = ""
+        if results:
+            context = "\n".join([r['text'] for r in results])
+        
+        if not context:
+            return {"questions": [{"question": "No content found", "options": ["Upload a document first"], "correct": 0, "explanation": "Please upload a document to generate a quiz."}]}
+
+        topic_instruction = f"Focus specifically on the topic: '{topic}'. " if topic != "all" else "Cover a variety of topics from the content. "
+
+        prompt = (
+            f"Generate exactly {num_questions} challenging multiple-choice quiz questions based on the following content. "
+            f"{topic_instruction}"
+            f"Each question should test understanding, not just recall. "
+            f"Return ONLY a JSON array (no markdown, no code fences) with this structure:\n"
+            f'[{{"question": "Question text?", "options": ["Option A", "Option B", "Option C", "Option D"], "correct": 0, "explanation": "Why this answer is correct.", "difficulty": "easy|medium|hard"}}]\n'
+            f"The 'correct' field is the 0-based index of the correct option.\n\n"
+            f"Content:\n{context[:5000]}"
+        )
+        
+        response = self.llm.get_response(
+            prompt, 
+            mode="Fast Mode", 
+            system_prompt="You are an expert quiz generator. Output ONLY valid JSON array. No markdown. No code fences."
+        )
+        
+        try:
+            cleaned = response.strip().replace('```json', '').replace('```', '').strip()
+            start = cleaned.find('[')
+            end = cleaned.rfind(']') + 1
+            if start != -1 and end > start:
+                questions = json.loads(cleaned[start:end])
+                return {"questions": questions}
+        except Exception as e:
+            print(f"Quiz generation error: {e}")
+        
+        return {"questions": [{"question": "Error generating quiz", "options": ["Please try again"], "correct": 0, "explanation": "Quiz generation failed.", "difficulty": "easy"}]}
+
     def get_audio_stream(self, text):
         return generate_audio(text)
 
-    def generate_overview(self):
+    def generate_overview(self, session_id: str = None):
         """Generates a podcast-style audio overview of the entire archive."""
-        results = self.memory.retrieve("summary", k=20) 
+        results = self.memory.retrieve("summary", k=20, session_id=session_id) 
         if not results:
             return None, "No documents found to summarize."
             
@@ -329,8 +496,8 @@ Your response must follow this exact schema:
         audio_stream = generate_audio(script)
         return audio_stream, script
 
-    def get_memory_stats(self):
-        return self.memory.get_stats()
+    def get_memory_stats(self, session_id: str = None):
+        return self.memory.get_stats(session_id=session_id)
 
     def _llm_rerank(self, query: str, chunks: list, top_k: int = 5) -> list:
         """Reranks retrieved chunks using LLM scoring to select the best context."""

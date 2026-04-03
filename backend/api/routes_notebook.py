@@ -30,10 +30,15 @@ async def query(request: Request, body: QueryRequest):
     # Actually, we pass the *past* history to the engine, and the engine/route appends the new turn.
     
     # 3. Execution
+    from api.routes_settings import _load_preferences
+    prefs = _load_preferences()
+    default_model = prefs.get('default_model', 'gemini/gemini-1.5-pro-latest')
+
     start_time = datetime.now()
     response, sources = engine.query(
         user_query=body.query,
         mode=body.mode,
+        model=default_model,
         session_id=body.session_id,
         chat_history=history, # Pass full history
         intent=body.intent,
@@ -90,9 +95,9 @@ async def upload_document(request: Request, file: UploadFile = File(...), sessio
     return {"message": result}
 
 @router.get("/sources")
-async def get_sources(request: Request):
+async def get_sources(request: Request, session_id: Optional[str] = None):
     engine = get_engine(request)
-    stats = engine.get_memory_stats()
+    stats = engine.get_memory_stats(session_id=session_id)
     # Frontend expects { sources: [...] } or [...]
     # stats is { "total_chunks": N, "sources": { "filename": count } }
     
@@ -130,10 +135,41 @@ async def create_goal(request: Request, body: GoalCreate):
     engine = get_engine(request)
     return engine.goals.add_goal(body)
 
+@router.patch("/goals/{goal_id}")
+async def update_goal(request: Request, goal_id: str):
+    """Toggle a goal's status between active and completed."""
+    engine = get_engine(request)
+    from models.goals import GoalUpdate
+    # Get current goal status
+    all_goals = engine.goals.get_goals()
+    current_goal = next((g for g in all_goals if g.goal_id == goal_id), None)
+    if not current_goal:
+        raise HTTPException(status_code=404, detail="Goal not found")
+    new_status = "completed" if current_goal.status == "active" else "active"
+    updated = engine.goals.update_goal(goal_id, GoalUpdate(status=new_status))
+    if not updated:
+        raise HTTPException(status_code=404, detail="Goal not found")
+    return updated
+
 @router.post("/flashcards")
 async def generate_flashcards(request: Request, session_id: str):
     engine = get_engine(request)
     return engine.generate_flashcards(session_id)
+
+@router.post("/quiz")
+async def generate_quiz(request: Request, session_id: str, topic: Optional[str] = "all", num_questions: Optional[int] = 5):
+    engine = get_engine(request)
+    return engine.generate_quiz_with_options(session_id, topic=topic, num_questions=num_questions)
+
+@router.get("/topics")
+async def get_topics(request: Request, session_id: Optional[str] = None):
+    engine = get_engine(request)
+    return engine.get_topics(session_id=session_id)
+
+@router.post("/brief")
+async def generate_brief(request: Request, session_id: str):
+    engine = get_engine(request)
+    return engine.generate_brief(session_id)
 
 @router.post("/audio/overview")
 async def generate_audio_overview(request: Request):

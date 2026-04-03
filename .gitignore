@@ -11,6 +11,9 @@ backend/credentials.json
 # ── Google API Tokens ────────────────────────
 **/gmail_token.json
 **/calendar_token.json
+**/token.json
+**/_web_credentials.json
+**/_oauth_pkce_state.json
 
 # ── Data Directory (sessions, actions, logs) ─
 data/

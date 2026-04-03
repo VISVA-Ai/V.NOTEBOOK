@@ -8,6 +8,7 @@ const SourcesUI = {
 
         State.subscribe((key, val) => {
             if (key === 'sources') this.render(val);
+            if (key === 'session') this.refresh();
         });
 
         this.refresh();
@@ -39,7 +40,7 @@ const SourcesUI = {
                 await API.uploadDocument(file, sessionId);
 
                 // Refresh list
-                const data = await API.getSources();
+                const data = await API.getSources(sessionId);
                 State.setSources(data.sources || []);
 
                 alert("Uploaded successfully!");
@@ -56,7 +57,8 @@ const SourcesUI = {
 
     async refresh() {
         try {
-            const data = await API.getSources();
+            const sessionId = State.data.currentSessionId;
+            const data = await API.getSources(sessionId);
             // Handle both Array return or { sources: [...] } return
             const sourcesList = Array.isArray(data) ? data : (data.sources || []);
             State.setSources(sourcesList);

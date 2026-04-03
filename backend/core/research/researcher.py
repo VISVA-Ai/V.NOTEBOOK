@@ -7,7 +7,10 @@ class Researcher:
         self.llm = LLMHandler()
         self.searcher = WebSearcher()
         
-    def research(self, query, model="llama-3.3-70b-versatile"):
+    def research(self, query, model=None):
+        if not model:
+            from api.routes_settings import _load_preferences
+            model = _load_preferences().get('default_model', 'groq/llama-3.3-70b-versatile')
         print(f"Searching for: {query}")
         results = self.searcher.search(query, max_results=5)
         

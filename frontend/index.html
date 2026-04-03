@@ -1325,6 +1325,644 @@
             color: #000;
             font-weight: 500;
         }
+
+        /* ══════════════════════════════════════════════════════════
+           SETTINGS MODAL
+           ══════════════════════════════════════════════════════════ */
+        .settings-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            animation: settingsFadeIn 0.2s ease;
+        }
+
+        .settings-overlay.active {
+            display: flex;
+        }
+
+        @keyframes settingsFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .settings-container {
+            background: #fbf9f3;
+            border: 1px solid #D1CEC7;
+            border-radius: 16px;
+            box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.2);
+            width: 680px;
+            max-width: 95vw;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: settingsSlideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes settingsSlideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 28px 16px;
+            border-bottom: 1px solid #eae8e2;
+        }
+
+        .settings-header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .settings-header-icon {
+            font-size: 28px;
+            color: #005bbf;
+            background: rgba(0, 91, 191, 0.08);
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        .settings-title {
+            font-family: 'Newsreader', 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-style: italic;
+            color: #1b1c18;
+            margin: 0;
+        }
+
+        .settings-subtitle {
+            font-size: 12px;
+            color: #727785;
+            margin: 2px 0 0;
+        }
+
+        .settings-close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            color: #727785;
+            transition: all 0.2s;
+        }
+
+        .settings-close-btn:hover {
+            background: #eae8e2;
+            color: #1b1c18;
+        }
+
+        /* Tabs */
+        .settings-tabs {
+            display: flex;
+            gap: 4px;
+            padding: 12px 28px 0;
+            border-bottom: 1px solid #eae8e2;
+        }
+
+        .settings-tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            color: #727785;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .settings-tab-btn .material-symbols-outlined {
+            font-size: 18px;
+        }
+
+        .settings-tab-btn:hover {
+            color: #1b1c18;
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .settings-tab-btn.active {
+            color: #005bbf;
+            border-bottom-color: #005bbf;
+        }
+
+        /* Panels */
+        .settings-panel {
+            display: none;
+            padding: 20px 28px 28px;
+        }
+
+        .settings-panel.active {
+            display: block;
+        }
+
+        /* Sections */
+        .settings-section {
+            background: #ffffff;
+            border: 1px solid #eae8e2;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .settings-section-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .section-icon {
+            font-size: 22px;
+            color: #005bbf;
+            margin-top: 2px;
+        }
+
+        .settings-section-header h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1b1c18;
+            margin: 0;
+        }
+
+        .settings-section-header p {
+            font-size: 12px;
+            color: #727785;
+            margin: 2px 0 0;
+        }
+
+        /* Key Fields */
+        .key-field {
+            margin-bottom: 14px;
+        }
+
+        .key-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #414754;
+            margin-bottom: 6px;
+        }
+
+        .key-input-row {
+            display: flex;
+            align-items: center;
+            border: 1px solid #D1CEC7;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #FAF9F6;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .key-input-row:focus-within {
+            border-color: #005bbf;
+            box-shadow: 0 0 0 3px rgba(0, 91, 191, 0.08);
+        }
+
+        .key-input-row input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #1b1c18;
+            outline: none;
+        }
+
+        .key-input-row input::placeholder {
+            color: #b0b4bc;
+        }
+
+        .toggle-visibility-btn {
+            background: none;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            color: #727785;
+            font-size: 18px;
+            transition: color 0.2s;
+        }
+
+        .toggle-visibility-btn:hover {
+            color: #005bbf;
+        }
+
+        .key-status {
+            display: inline-block;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            margin-top: 4px;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .key-status.set {
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        .key-status.unset {
+            color: #92400e;
+            background: #fef3c7;
+        }
+
+        .optional-badge {
+            font-size: 10px;
+            color: #727785;
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        .settings-link {
+            font-size: 12px;
+            color: #005bbf;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .settings-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Preference Fields */
+        .pref-field {
+            margin-bottom: 16px;
+        }
+
+        .pref-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1b1c18;
+            margin-bottom: 6px;
+        }
+
+        .pref-description {
+            font-size: 11px;
+            color: #727785;
+            margin: 0;
+        }
+
+        .pref-select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #D1CEC7;
+            border-radius: 8px;
+            background: #FAF9F6;
+            font-size: 13px;
+            color: #1b1c18;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .pref-select:focus {
+            border-color: #005bbf;
+        }
+
+        .toggle-field {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #D1CEC7;
+            border-radius: 24px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: #005bbf;
+        }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(20px);
+        }
+
+        /* Memory Stats */
+        .memory-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .memory-stat-card {
+            text-align: center;
+            padding: 16px 8px;
+            background: #f5f3ed;
+            border-radius: 10px;
+            border: 1px solid #eae8e2;
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            color: #005bbf;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1b1c18;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #727785;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .memory-source-list {
+            margin-top: 12px;
+        }
+
+        .memory-source-list h4 {
+            font-size: 12px;
+            font-weight: 700;
+            color: #414754;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .memory-source-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #FAF9F6;
+            border: 1px solid #eae8e2;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+
+        .source-name {
+            color: #1b1c18;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 380px;
+        }
+
+        .source-chunks {
+            color: #727785;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            flex-shrink: 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #727785;
+            font-size: 13px;
+            padding: 20px;
+        }
+
+        /* Danger Zone */
+        .danger-zone {
+            border-color: #fecaca;
+            background: #fff5f5;
+        }
+
+        .danger-zone h3 {
+            color: #ba1a1a;
+        }
+
+        .danger-description {
+            font-size: 12px;
+            color: #727785;
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+
+        /* Buttons */
+        .settings-actions {
+            padding-top: 8px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .settings-btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .settings-btn.primary {
+            background: #005bbf;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 91, 191, 0.2);
+        }
+
+        .settings-btn.primary:hover {
+            background: #1a73e8;
+        }
+
+        .settings-btn.primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .settings-btn.danger {
+            background: #ba1a1a;
+            color: white;
+        }
+
+        .settings-btn.danger:hover {
+            background: #d32f2f;
+        }
+
+        /* Toast */
+        .settings-toast {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            text-align: center;
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .settings-toast.visible {
+            padding: 10px 28px;
+            max-height: 50px;
+        }
+
+        .settings-toast.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .settings-toast.warn {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .settings-toast.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* ── Settings Dark Mode ── */
+        html.dark .settings-container {
+            background: #1a1b1e;
+            border-color: #3f4147;
+        }
+
+        html.dark .settings-header {
+            border-color: #3f4147;
+        }
+
+        html.dark .settings-title {
+            color: #e4e2dc;
+        }
+
+        html.dark .settings-tabs {
+            border-color: #3f4147;
+        }
+
+        html.dark .settings-tab-btn {
+            color: #a0a4b0;
+        }
+
+        html.dark .settings-tab-btn:hover {
+            color: #e4e2dc;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        html.dark .settings-tab-btn.active {
+            color: #7cacf8;
+            border-bottom-color: #7cacf8;
+        }
+
+        html.dark .settings-section {
+            background: #212225;
+            border-color: #3f4147;
+        }
+
+        html.dark .settings-section-header h3 {
+            color: #e4e2dc;
+        }
+
+        html.dark .key-field label,
+        html.dark .pref-field label {
+            color: #a0a4b0;
+        }
+
+        html.dark .key-input-row {
+            background: #2b2d31;
+            border-color: #3f4147;
+        }
+
+        html.dark .key-input-row input {
+            color: #e4e2dc;
+        }
+
+        html.dark .pref-select {
+            background: #2b2d31;
+            border-color: #3f4147;
+            color: #e4e2dc;
+        }
+
+        html.dark .memory-stat-card {
+            background: #2b2d31;
+            border-color: #3f4147;
+        }
+
+        html.dark .stat-value {
+            color: #e4e2dc;
+        }
+
+        html.dark .memory-source-item {
+            background: #2b2d31;
+            border-color: #3f4147;
+        }
+
+        html.dark .source-name {
+            color: #e4e2dc;
+        }
+
+        html.dark .danger-zone {
+            background: #2e1a1a;
+            border-color: #5a2d2d;
+        }
+
+        html.dark .toggle-slider {
+            background: #3f4147;
+        }
+
+        html.dark .settings-close-btn:hover {
+            background: #35373b;
+        }
+
+        html.dark .settings-header-icon {
+            background: rgba(124, 172, 248, 0.1);
+            color: #7cacf8;
+        }
+
+        html.dark .section-icon {
+            color: #7cacf8;
+        }
     </style>
 </head>
 
@@ -1363,6 +2001,9 @@
                     class="bg-primary-container text-on-primary-container px-4 py-1.5 rounded-lg font-medium shadow-sm active:opacity-80 active:scale-95 transition-all text-sm">+
                     New Chat</button>
                 <div class="flex gap-2 ml-4">
+                    <button id="btn-settings" onclick="SettingsUI.open()"
+                        class="material-symbols-outlined cursor-pointer text-on-surface-variant p-2 hover:bg-surface-container-high rounded-full transition-colors"
+                        title="Settings">settings</button>
                     <button id="theme-btn"
                         class="material-symbols-outlined cursor-pointer text-on-surface-variant p-2 hover:bg-surface-container-high rounded-full transition-colors"
                         data-icon="dark_mode">dark_mode</button>
@@ -1599,6 +2240,279 @@
             <!-- Placeholder — AssistantUI.init() replaces innerHTML -->
         </main>
 
+        <!-- ══════════════════════════════════════════════════════════
+         SETTINGS MODAL
+         ══════════════════════════════════════════════════════════ -->
+        <div id="settings-modal" class="settings-overlay">
+            <div class="settings-container">
+                <!-- Header -->
+                <div class="settings-header">
+                    <div class="settings-header-left">
+                        <span class="material-symbols-outlined settings-header-icon">settings</span>
+                        <div>
+                            <h2 class="settings-title">Settings</h2>
+                            <p class="settings-subtitle">API keys, preferences, and integrations</p>
+                        </div>
+                    </div>
+                    <button id="btn-close-settings" class="settings-close-btn">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                <!-- Toast -->
+                <div id="settings-toast" class="settings-toast"></div>
+
+                <!-- Tabs -->
+                <div class="settings-tabs">
+                    <button class="settings-tab-btn active" data-tab="keys">
+                        <span class="material-symbols-outlined">key</span> API Keys
+                    </button>
+                    <button class="settings-tab-btn" data-tab="memory">
+                        <span class="material-symbols-outlined">database</span> Memory
+                    </button>
+                    <button class="settings-tab-btn" data-tab="prefs">
+                        <span class="material-symbols-outlined">tune</span> Preferences
+                    </button>
+                    <button class="settings-tab-btn" data-tab="integrations">
+                        <span class="material-symbols-outlined">hub</span> Integrations
+                    </button>
+                </div>
+
+                <!-- Panel: API Keys -->
+                <div id="settings-panel-keys" class="settings-panel active">
+                    <div class="settings-section">
+                        <div class="settings-section-header">
+                            <span class="material-symbols-outlined section-icon">key</span>
+                            <div>
+                                <h3>API Providers</h3>
+                                <p>Configure API keys for any providers you want to use</p>
+                            </div>
+                        </div>
+
+                        <!-- Groq -->
+                        <div class="key-field">
+                            <label>Groq API Key</label>
+                            <div class="key-input-row">
+                                <input type="password" id="input-groq_api_key" placeholder="gsk_..." autocomplete="off" />
+                                <button class="toggle-visibility-btn material-symbols-outlined">visibility</button>
+                            </div>
+                            <span id="status-groq_api_key" class="key-status unset">Not configured</span>
+                        </div>
+
+                        <!-- Google Gemini -->
+                        <div class="key-field">
+                            <label>Google Gemini API Key</label>
+                            <div class="key-input-row">
+                                <input type="password" id="input-gemini_api_key" placeholder="AIza..." autocomplete="off" />
+                                <button class="toggle-visibility-btn material-symbols-outlined">visibility</button>
+                            </div>
+                            <span id="status-gemini_api_key" class="key-status unset">Not configured</span>
+                        </div>
+
+                        <!-- OpenAI -->
+                        <div class="key-field">
+                            <label>OpenAI API Key</label>
+                            <div class="key-input-row">
+                                <input type="password" id="input-openai_api_key" placeholder="sk-..." autocomplete="off" />
+                                <button class="toggle-visibility-btn material-symbols-outlined">visibility</button>
+                            </div>
+                            <span id="status-openai_api_key" class="key-status unset">Not configured</span>
+                        </div>
+
+                        <!-- Anthropic -->
+                        <div class="key-field">
+                            <label>Anthropic API Key</label>
+                            <div class="key-input-row">
+                                <input type="password" id="input-anthropic_api_key" placeholder="sk-ant-..." autocomplete="off" />
+                                <button class="toggle-visibility-btn material-symbols-outlined">visibility</button>
+                            </div>
+                            <span id="status-anthropic_api_key" class="key-status unset">Not configured</span>
+                        </div>
+
+                        <div style="display: flex; gap: 16px; margin-top: 12px; margin-bottom: 24px;">
+                            <a href="https://console.groq.com/keys" target="_blank" class="settings-link">Get free Groq Key →</a>
+                            <a href="https://aistudio.google.com/app/apikey" target="_blank" class="settings-link">Get free Gemini Key →</a>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="settings-section-header">
+                            <span class="material-symbols-outlined section-icon">travel_explore</span>
+                            <div>
+                                <h3>Tavily Search</h3>
+                                <p>Powers the Deep Research web search engine</p>
+                            </div>
+                        </div>
+                        <div class="key-field">
+                            <label>API Key</label>
+                            <div class="key-input-row">
+                                <input type="password" id="input-tavily_api_key" placeholder="tvly-..." autocomplete="off" />
+                                <button class="toggle-visibility-btn material-symbols-outlined">visibility</button>
+                            </div>
+                            <span id="status-tavily_api_key" class="key-status unset">Not configured</span>
+                        </div>
+                        <a href="https://tavily.com" target="_blank" class="settings-link">Get a Tavily API key →</a>
+                    </div>
+
+                    <div class="settings-actions">
+                        <button id="btn-save-keys" class="settings-btn primary">Save API Keys</button>
+                    </div>
+                </div>
+
+                <!-- Panel: Memory -->
+                <div id="settings-panel-memory" class="settings-panel">
+                    <div class="settings-section">
+                        <div class="settings-section-header">
+                            <span class="material-symbols-outlined section-icon">database</span>
+                            <div>
+                                <h3>Knowledge Archive</h3>
+                                <p>Your indexed documents and embeddings</p>
+                            </div>
+                        </div>
+                        <div id="memory-stats-content">
+                            <p class="empty-state">Loading stats...</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-section danger-zone">
+                        <div class="settings-section-header">
+                            <span class="material-symbols-outlined section-icon" style="color:#ba1a1a">warning</span>
+                            <div>
+                                <h3>Danger Zone</h3>
+                                <p>Irreversible actions — proceed with caution</p>
+                            </div>
+                        </div>
+                        <p class="danger-description">This will permanently delete all knowledge chunks, embeddings, and indexed sources from the archive. You will need to re-upload your documents.</p>
+                        <button id="btn-wipe-archive" class="settings-btn danger">Wipe All Data</button>
+                    </div>
+                </div>
+
+                <!-- Panel: Preferences -->
+                <div id="settings-panel-prefs" class="settings-panel">
+                    <div class="settings-section">
+                        <div class="settings-section-header">
+                            <span class="material-symbols-outlined section-icon">psychology</span>
+                            <div>
+                                <h3>AI Behavior</h3>
+                                <p>Control how the AI assistant works</p>
+                            </div>
+                        </div>
+                        <div class="pref-field">
+                            <label>Default LLM Model</label>
+                            <select id="pref-default-model" class="pref-select">
+                                <option value="gemini/gemini-1.5-pro-latest">Google Gemini 1.5 Pro</option>
+                                <option value="gemini/gemini-1.5-flash-latest">Google Gemini 1.5 Flash</option>
+                                <option value="openai/gpt-4o">OpenAI GPT-4o</option>
+                                <option value="openai/gpt-4o-mini">OpenAI GPT-4o Mini</option>
+                                <option value="claude-3-5-sonnet-20240620">Anthropic Claude 3.5 Sonnet</option>
+                                <option value="groq/llama-3.3-70b-versatile">Groq Llama 3.3 70B</option>
+                                <option value="groq/llama-3.1-8b-instant">Groq Llama 3.1 8B</option>
+                            </select>
+                        </div>
+                        <div class="pref-field toggle-field">
+                            <div>
+                                <label>Auto-Goal Inference</label>
+                                <p class="pref-description">Automatically detect research goals from conversations</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="pref-auto-goals" checked />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="settings-section-header">
+                            <span class="material-symbols-outlined section-icon">palette</span>
+                            <div>
+                                <h3>Interface</h3>
+                                <p>Customize the look and feel</p>
+                            </div>
+                        </div>
+                        <div class="pref-field">
+                            <label>Default Workspace</label>
+                            <select id="pref-default-workspace" class="pref-select">
+                                <option value="notebook">V.NB (Notebook)</option>
+                                <option value="assistant">V.ASSISTANT</option>
+                            </select>
+                        </div>
+                        <div class="pref-field toggle-field">
+                            <div>
+                                <label>Compact Mode</label>
+                                <p class="pref-description">Reduce spacing in chat messages for denser view</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="pref-compact-mode" />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-actions">
+                        <button id="btn-save-prefs" class="settings-btn primary">Save Preferences</button>
+                    </div>
+                </div>
+
+                <!-- Panel: Integrations -->
+                <div id="settings-panel-integrations" class="settings-panel">
+                    <div class="settings-section">
+                        <div class="settings-section-header">
+                            <span class="material-symbols-outlined section-icon">mail</span>
+                            <div>
+                                <h3>Google Workspace</h3>
+                                <p>Connect Gmail and Google Calendar</p>
+                            </div>
+                        </div>
+                        <div class="key-field">
+                            <div id="google-auth-status" class="mb-4 text-sm text-on-surface-variant">Checking status...</div>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <a id="btn-google-login" href="/api/auth/google/login" class="settings-btn" style="background: white; color: #757575; border: 1px solid #ddd; padding: 8px 16px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-weight: 500; font-family: 'Roboto', sans-serif;">
+                                    <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.7 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                                    Sign in with Google
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <div class="settings-section-header">
+                            <span class="material-symbols-outlined section-icon">chat</span>
+                            <div>
+                                <h3>WhatsApp Business</h3>
+                                <p>Let V.ASSISTANT send WhatsApp messages on your behalf</p>
+                            </div>
+                        </div>
+                        <div class="key-field">
+                            <label>API URL</label>
+                            <div class="key-input-row">
+                                <input type="text" id="input-whatsapp_api_url" placeholder="https://graph.facebook.com/v18.0" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="key-field">
+                            <label>API Token</label>
+                            <div class="key-input-row">
+                                <input type="password" id="input-whatsapp_api_token" placeholder="Bearer token..." autocomplete="off" />
+                                <button class="toggle-visibility-btn material-symbols-outlined">visibility</button>
+                            </div>
+                            <span id="status-whatsapp_api_token" class="key-status unset">Not configured</span>
+                        </div>
+                        <div class="key-field">
+                            <label>Phone Number ID</label>
+                            <div class="key-input-row">
+                                <input type="text" id="input-whatsapp_phone_number_id" placeholder="123456789012345" autocomplete="off" />
+                            </div>
+                        </div>
+                        <a href="https://developers.facebook.com/docs/whatsapp" target="_blank" class="settings-link">WhatsApp Business API docs →</a>
+                    </div>
+
+                    <div class="settings-actions">
+                        <button onclick="document.getElementById('btn-save-keys').click()" class="settings-btn primary">Save Integration Keys</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
     </div>
 
     <!-- ══════════════════════════════════════════════════════════
@@ -1623,6 +2537,9 @@
 
     <!-- Assistant -->
     <script src="js/assistant/dashboard.js?v=4"></script>
+
+    <!-- Settings -->
+    <script src="js/settings.js?v=1"></script>
 
     <!-- Main App -->
     <script src="js/app.js?v=8"></script>

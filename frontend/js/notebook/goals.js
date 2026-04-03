@@ -8,6 +8,20 @@ const GoalsUI = {
         });
     },
 
+    async toggleGoal(goalId, event) {
+        if (event) event.stopPropagation();
+        
+        try {
+            console.log(`[GoalsUI] Toggling goal: ${goalId}`);
+            await API.updateGoal(goalId);
+            // Refresh local goals
+            this.refresh();
+        } catch (e) {
+            console.error("Failed to toggle goal status:", e);
+            alert("Failed to update goal: " + e.message);
+        }
+    },
+
     updateList(goals) {
         const container = document.getElementById('goals-list');
         if (!container) return;
@@ -22,19 +36,31 @@ const GoalsUI = {
             return;
         }
 
-        container.innerHTML = goals.map(g => `
-            <div class="mb-3 p-3 bg-surface rounded-lg border border-border shadow-sm hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-1">
-                    <span class="font-display font-medium text-primary text-sm">${g.title}</span>
-                    <span class="text-xs ${g.confidence > 0.8 ? 'text-mode-grounded' : 'text-text-tertiary'}">${Math.round(g.confidence * 100)}%</span>
+        container.innerHTML = goals.map(g => {
+            const isCompleted = g.status === 'completed';
+            return `
+                <div class="mb-3 p-3 bg-surface rounded-lg border border-border shadow-sm hover:shadow-md transition-all ${isCompleted ? 'opacity-60' : ''}">
+                    <div class="flex justify-between items-start mb-1">
+                        <div class="flex gap-2 items-start">
+                            <button class="mt-0.5 text-primary hover:scale-110 transition-transform" 
+                                    onclick="GoalsUI.toggleGoal('${g.goal_id}', event)"
+                                    title="${isCompleted ? 'Mark as active' : 'Mark as complete'}">
+                                <span class="material-symbols-outlined text-[18px]">
+                                    ${isCompleted ? 'check_box' : 'check_box_outline_blank'}
+                                </span>
+                            </button>
+                            <span class="font-display font-medium text-primary text-sm ${isCompleted ? 'line-through' : ''}">${g.title}</span>
+                        </div>
+                        <span class="text-xs ${g.confidence > 0.8 ? 'text-mode-grounded' : 'text-text-tertiary'}">${Math.round(g.confidence * 100)}%</span>
+                    </div>
+                    <div class="text-xs text-secondary leading-snug mb-2 pl-7">${g.description || 'No description'}</div>
+                    <div class="flex justify-between items-center border-t border-border pt-2 mt-2 pl-7">
+                        <span class="badge badge-low text-[10px] px-1.5 py-0.5">${g.source}</span>
+                        <span class="text-[10px] text-tertiary">${g.touch_count || 0} interactions</span>
+                    </div>
                 </div>
-                <div class="text-xs text-secondary leading-snug mb-2">${g.description || 'No description'}</div>
-                <div class="flex justify-between items-center border-t border-border pt-2 mt-2">
-                    <span class="badge badge-low text-[10px] px-1.5 py-0.5">${g.source}</span>
-                    <span class="text-[10px] text-tertiary">${g.touch_count || 0} interactions</span>
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     },
 
     render() {
@@ -49,7 +75,7 @@ const GoalsUI = {
                 State.setGoals([]);
                 return;
             }
-            const goals = await API.getGoals('active', sessionId);
+            const goals = await API.getGoals(null, sessionId);
             State.setGoals(goals);
         } catch (e) {
             console.error("Failed to refresh goals:", e);

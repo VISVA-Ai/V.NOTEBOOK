@@ -37,25 +37,36 @@ class Memory:
         # Store raw docs
         self.documents.extend(documents)
 
-    def retrieve(self, query, k=5):
-        """Retrieves top-k relevant documents for a query."""
+    def retrieve(self, query, k=5, session_id=None):
+        """Retrieves top-k relevant documents for a query, optionally filtered by session_id."""
         if self.index.ntotal == 0:
             return []
             
         query_embedding = self.get_embedding(query)
         query_vec = np.array([query_embedding]).astype('float32')
         
-        distances, indices = self.index.search(query_vec, k)
+        # If filtering by session, over-fetch to compensate for filtering
+        fetch_k = k * 4 if session_id else k
+        fetch_k = min(fetch_k, self.index.ntotal)
+        
+        distances, indices = self.index.search(query_vec, fetch_k)
         
         results = []
         for i, idx in enumerate(indices[0]):
             if idx != -1 and idx < len(self.documents):
                 doc = self.documents[idx]
+                # Filter by session_id if provided
+                if session_id:
+                    doc_session = doc.get('metadata', {}).get('session_id')
+                    if doc_session != session_id:
+                        continue
                 results.append({
                     'text': doc['text'],
                     'metadata': doc.get('metadata', {}),
                     'distance': float(distances[0][i])
                 })
+                if len(results) >= k:
+                    break
         return results
 
     def remove_source(self, source_name: str) -> int:
@@ -90,17 +101,24 @@ class Memory:
             
         return chunks_removed
 
-    def get_stats(self):
-        """Returns stats about stored documents."""
+    def get_stats(self, session_id=None):
+        """Returns stats about stored documents, optionally filtered by session_id."""
         stats = {
-            "total_chunks": len(self.documents),
+            "total_chunks": 0,
             "sources": {}
         }
         for doc in self.documents:
-            src = doc.get("metadata", {}).get("source", "Unknown")
+            meta = doc.get("metadata", {})
+            # Filter by session_id if provided
+            if session_id:
+                doc_session = meta.get("session_id")
+                if doc_session != session_id:
+                    continue
+            src = meta.get("source", "Unknown")
             if src not in stats["sources"]:
                 stats["sources"][src] = 0
             stats["sources"][src] += 1
+        stats["total_chunks"] = sum(stats["sources"].values())
         return stats
 
     def clear(self):

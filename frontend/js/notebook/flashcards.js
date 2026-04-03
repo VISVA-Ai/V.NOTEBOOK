@@ -59,11 +59,11 @@ const FlashcardsUI = {
     render() {
         if (this.cards.length === 0) {
             this.container.innerHTML = `
-                <div class="flashcard-empty">
-                    <div class="flashcard-empty-icon">🗂️</div>
-                    <div class="text-sm font-medium text-secondary">No Flashcards</div>
-                    <div class="text-xs text-tertiary mt-1">Use 'Grounded Mode' to unlock.</div>
-                    <button class="btn btn-secondary text-xs mt-3" onclick="FlashcardsUI.generate()">+ Generate</button>
+                <div class="flex flex-col items-center justify-center p-8 text-center border-2 border-dashed border-outline-variant/30 rounded-2xl bg-surface">
+                    <div class="text-3xl mb-2 opacity-50">🗂️</div>
+                    <div class="text-sm font-medium text-on-surface-variant">No Flashcards</div>
+                    <div class="text-xs text-on-surface-variant/50 mt-1">Use 'Grounded Mode' to unlock.</div>
+                    <button class="px-4 py-2 mt-4 text-xs font-medium bg-surface-variant hover:bg-surface-container text-on-surface rounded-lg transition-colors border border-outline-variant/20 shadow-sm" onclick="FlashcardsUI.generate()">+ Generate</button>
                 </div>
             `;
             return;
@@ -74,52 +74,72 @@ const FlashcardsUI = {
         const currentNum = this.currentIndex + 1;
 
         this.container.innerHTML = `
-            <div class="flashcard-wrapper">
+            <div class="flex flex-col gap-4 w-full">
                 <!-- Progress Indicator -->
-                <div class="flashcard-progress">
-                    <span class="flashcard-progress-text">${currentNum} / ${totalCards}</span>
-                    <div class="flashcard-progress-bar">
-                        <div class="flashcard-progress-fill" style="width: ${(currentNum / totalCards) * 100}%"></div>
+                <div class="flex items-center gap-3">
+                    <span class="text-[10px] font-mono font-bold text-on-surface-variant whitespace-nowrap">${currentNum} / ${totalCards}</span>
+                    <div class="flex-1 h-1.5 bg-outline-variant/20 rounded-full overflow-hidden">
+                        <div class="h-full bg-primary transition-all duration-300 ease-out" style="width: ${(currentNum / totalCards) * 100}%"></div>
                     </div>
                 </div>
 
-                <!-- Card -->
-                <div class="flashcard ${this.isFlipped ? 'flipped' : ''}" onclick="FlashcardsUI.flipCard()" tabindex="0">
-                    <div class="flashcard-inner">
-                        <div class="flashcard-face flashcard-front">
-                            <div class="flashcard-label flex-row" style="justify-content: space-between;">
+                <!-- 3D Flashcard -->
+                <div class="flashcard group relative w-full h-[220px] cursor-pointer focus:outline-none focus:ring-2 ring-primary/30 rounded-2xl" 
+                     style="perspective: 1200px;" 
+                     onclick="FlashcardsUI.flipCard()" 
+                     tabindex="0">
+                    
+                    <div class="flashcard-inner w-full h-full relative transition-transform duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)]" 
+                         style="transform-style: preserve-3d; ${this.isFlipped ? 'transform: rotateY(180deg);' : ''}">
+                        
+                        <!-- Front Face -->
+                        <div class="absolute inset-0 w-full h-full flex flex-col p-5 bg-surface rounded-2xl border border-outline-variant/30 shadow-sm backface-hidden" 
+                             style="backface-visibility: hidden; background: linear-gradient(145deg, var(--bg-primary) 0%, var(--bg-hover) 100%);">
+                            <div class="flex justify-between items-center text-[9px] uppercase tracking-wider font-bold text-on-surface-variant/60 mb-3">
                                 <span>Question</span>
                                 ${card.type || card.difficulty ? `
-                                <div class="flashcard-badges">
-                                    ${card.type ? `<span class="badge type-badge">${card.type}</span>` : ''}
-                                    ${card.difficulty ? `<span class="badge diff-badge">${card.difficulty}</span>` : ''}
+                                <div class="flex gap-1.5">
+                                    ${card.type ? `<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary">${card.type}</span>` : ''}
+                                    ${card.difficulty ? `<span class="px-2 py-0.5 rounded-full bg-[#fde68a] text-yellow-800">${card.difficulty}</span>` : ''}
                                 </div>` : ''}
                             </div>
-                            <div class="flashcard-content">${this.escapeHtml(card.front)}</div>
+                            <div class="flex flex-1 items-center justify-center text-center font-headline text-[1.1rem] leading-snug text-on-surface overflow-y-auto px-2 custom-scrollbar">
+                                ${this.escapeHtml(card.front)}
+                            </div>
                         </div>
-                        <div class="flashcard-face flashcard-back">
-                            <div class="flashcard-label">Answer</div>
-                            <div class="flashcard-content">${this.escapeHtml(card.back)}</div>
-                            ${card.sources ? `<div class="flashcard-sources">Sources: ${card.sources}</div>` : ''}
+
+                        <!-- Back Face -->
+                        <div class="absolute inset-0 w-full h-full flex flex-col p-5 rounded-2xl shadow-md text-white backface-hidden" 
+                             style="backface-visibility: hidden; transform: rotateY(180deg); background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);">
+                            <div class="text-[9px] uppercase tracking-wider font-bold text-white/60 mb-3 text-center">Answer</div>
+                            <div class="flex flex-1 items-center justify-center text-center font-headline text-[1.05rem] leading-snug text-white overflow-y-auto px-2 custom-scrollbar">
+                                ${this.escapeHtml(card.back)}
+                            </div>
+                            ${card.sources ? `<div class="mt-3 text-[9px] text-white/50 text-center font-mono">Sources: ${card.sources}</div>` : ''}
                         </div>
                     </div>
                 </div>
 
                 <!-- Controls -->
-                <div class="flashcard-controls">
-                    <button class="flashcard-nav-btn" onclick="FlashcardsUI.prevCard()" ${this.currentIndex === 0 ? 'disabled' : ''}>
+                <div class="flex justify-center gap-2 mt-2">
+                    <button class="px-4 py-1.5 text-xs font-medium border border-outline-variant/40 rounded-lg hover:bg-surface-variant transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-on-surface" 
+                            onclick="FlashcardsUI.prevCard(); event.stopPropagation();" 
+                            ${this.currentIndex === 0 ? 'disabled' : ''}>
                         ◀ Prev
                     </button>
-                    <button class="flashcard-flip-btn" onclick="FlashcardsUI.flipCard()">
+                    <button class="px-6 py-1.5 text-xs font-semibold bg-primary text-white rounded-lg hover:bg-primary-container transition-all shadow-sm" 
+                            onclick="FlashcardsUI.flipCard(); event.stopPropagation();">
                         ↻ Flip
                     </button>
-                    <button class="flashcard-nav-btn" onclick="FlashcardsUI.nextCard()" ${this.currentIndex >= totalCards - 1 ? 'disabled' : ''}>
+                    <button class="px-4 py-1.5 text-xs font-medium border border-outline-variant/40 rounded-lg hover:bg-surface-variant transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-on-surface" 
+                            onclick="FlashcardsUI.nextCard(); event.stopPropagation();" 
+                            ${this.currentIndex >= totalCards - 1 ? 'disabled' : ''}>
                         Next ▶
                     </button>
                 </div>
 
                 <!-- Keyboard Hint -->
-                <div class="flashcard-hint">
+                <div class="flex justify-center gap-4 text-[9px] text-on-surface-variant/40 uppercase tracking-widest mt-1">
                     <span>← → Navigate</span>
                     <span>Space to flip</span>
                 </div>
@@ -145,9 +165,9 @@ const FlashcardsUI = {
 
     flipCard() {
         this.isFlipped = !this.isFlipped;
-        const cardEl = this.container.querySelector('.flashcard');
-        if (cardEl) {
-            cardEl.classList.toggle('flipped', this.isFlipped);
+        const innerEl = this.container.querySelector('.flashcard-inner');
+        if (innerEl) {
+            innerEl.style.transform = this.isFlipped ? 'rotateY(180deg)' : '';
         }
     },
 

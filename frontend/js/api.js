@@ -87,8 +87,10 @@ const API = {
         return await response.json();
     },
 
-    async getSources() {
-        return this.request('/notebook/sources');
+    async getSources(sessionId = null) {
+        let url = '/notebook/sources';
+        if (sessionId) url += `?session_id=${sessionId}`;
+        return this.request(url);
     },
 
     async deleteSource(sourceId) {
@@ -102,11 +104,12 @@ const API = {
     },
 
     // === COGNITIVE ===
-    async getGoals(status = 'active', sessionId = null) {
-        let url = `/notebook/goals?status=${status}`;
-        if (sessionId) {
-            url += `&session_id=${sessionId}`;
-        }
+    async getGoals(status = null, sessionId = null) {
+        let url = '/notebook/goals';
+        const params = [];
+        if (status) params.push(`status=${status}`);
+        if (sessionId) params.push(`session_id=${sessionId}`);
+        if (params.length) url += '?' + params.join('&');
         return this.request(url);
     },
 
@@ -117,8 +120,32 @@ const API = {
         });
     },
 
+    async updateGoal(goalId) {
+        return this.request(`/notebook/goals/${goalId}`, {
+            method: 'PATCH'
+        });
+    },
+
     async generateFlashcards(sessionId) {
         return this.request(`/notebook/flashcards?session_id=${sessionId}`, {
+            method: 'POST'
+        });
+    },
+
+    async generateQuiz(sessionId, topic = 'all', numQuestions = 5) {
+        return this.request(`/notebook/quiz?session_id=${sessionId}&topic=${encodeURIComponent(topic)}&num_questions=${numQuestions}`, {
+            method: 'POST'
+        });
+    },
+
+    async getTopics(sessionId = null) {
+        let url = '/notebook/topics';
+        if (sessionId) url += `?session_id=${sessionId}`;
+        return this.request(url);
+    },
+
+    async generateBrief(sessionId) {
+        return this.request(`/notebook/brief?session_id=${sessionId}`, {
             method: 'POST'
         });
     },
@@ -191,6 +218,39 @@ const API = {
     async resetAssistantSession(sessionId = 'assistant-default') {
         return this.request(`/assistant/reset?session_id=${sessionId}`, {
             method: 'POST'
+        });
+    },
+
+    // === SETTINGS ===
+    async getKeysStatus() {
+        return this.request('/settings/keys');
+    },
+
+    async saveKeys(payload) {
+        return this.request('/settings/keys', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+    },
+
+    async getMemoryStats() {
+        return this.request('/settings/memory');
+    },
+
+    async wipeMemory() {
+        return this.request('/settings/memory/wipe', {
+            method: 'POST'
+        });
+    },
+
+    async getPreferences() {
+        return this.request('/settings/preferences');
+    },
+
+    async savePreferences(payload) {
+        return this.request('/settings/preferences', {
+            method: 'POST',
+            body: JSON.stringify(payload)
         });
     }
 };

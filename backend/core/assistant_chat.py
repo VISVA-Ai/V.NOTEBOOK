@@ -127,10 +127,12 @@ class AssistantChatParser:
         )
 
         # Call LLM
+        from api.routes_settings import _load_preferences
+        _model = _load_preferences().get('default_model', 'groq/llama-3.3-70b-versatile')
         raw_response = self.llm.get_response(
             prompt=prompt,
             system_prompt=dynamic_system_prompt,
-            model="llama-3.3-70b-versatile",
+            model=_model,
         )
 
         # Parse LLM output

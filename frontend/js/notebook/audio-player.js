@@ -70,30 +70,34 @@ const AudioPlayerUI = {
         const hasTranscript = this.transcript.length > 0;
 
         this.container.innerHTML = `
-            <div class="audio-player">
-                <div class="audio-header">
-                    <span class="audio-title">🎧 Audio Overview</span>
-                    <button class="audio-close-btn" onclick="AudioPlayerUI.hide()">×</button>
+            <div class="flex flex-col gap-4 p-5 bg-surface rounded-2xl border border-outline-variant/30 shadow-sm relative overflow-hidden">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-[13px] font-semibold text-on-surface select-none flex items-center gap-2">
+                         <span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">audio_file</span>
+                         Audio Overview
+                    </span>
+                    <button class="w-6 h-6 flex items-center justify-center text-on-surface-variant/70 hover:text-on-surface hover:bg-surface-variant rounded-md transition-colors" onclick="AudioPlayerUI.hide()">✕</button>
                 </div>
 
                 <!-- Seek Bar -->
-                <div class="audio-seek-container">
-                    <input type="range" class="audio-seek" min="0" max="${Math.floor(duration)}" value="0" 
+                <div class="flex flex-col gap-1.5 w-full">
+                    <input type="range" class="audio-seek w-full h-1.5 bg-outline-variant/30 rounded-full appearance-none cursor-pointer accent-primary outline-none" 
+                        min="0" max="${Math.floor(duration)}" value="0" 
                         oninput="AudioPlayerUI.seek(this.value)">
-                    <div class="audio-time">
+                    <div class="flex justify-between text-[10px] font-mono font-bold text-on-surface-variant/50">
                         <span class="audio-current-time">0:00</span>
                         <span class="audio-duration">${this.formatTime(duration)}</span>
                     </div>
                 </div>
 
                 <!-- Controls -->
-                <div class="audio-controls">
-                    <button class="audio-btn audio-play-btn" onclick="AudioPlayerUI.togglePlay()">
-                        <span class="play-icon">▶</span>
+                <div class="flex items-center justify-center gap-6 my-2">
+                    <button class="audio-play-btn w-11 h-11 flex items-center justify-center rounded-full bg-primary text-white hover:bg-primary-container transition-all shadow-md transform hover:scale-105" onclick="AudioPlayerUI.togglePlay()">
+                        <span class="play-icon text-xl leading-none ml-1">▶</span>
                     </button>
                     
-                    <div class="audio-speed-container">
-                        <select class="audio-speed" onchange="AudioPlayerUI.setSpeed(this.value)">
+                    <div class="absolute right-5 bottom-5">
+                        <select class="px-2 py-1 text-[10px] font-medium border border-outline-variant/40 rounded-md bg-transparent text-on-surface-variant cursor-pointer outline-none focus:ring-1 focus:ring-primary/50" onchange="AudioPlayerUI.setSpeed(this.value)">
                             <option value="0.5">0.5×</option>
                             <option value="0.75">0.75×</option>
                             <option value="1" selected>1×</option>
@@ -106,11 +110,11 @@ const AudioPlayerUI = {
 
                 <!-- Transcript Panel -->
                 ${hasTranscript ? `
-                    <div class="transcript-panel">
-                        <div class="transcript-header">Transcript</div>
-                        <div class="transcript-content">
+                    <div class="mt-2 pt-3 border-t border-outline-variant/20 max-h-[150px] overflow-y-auto custom-scrollbar">
+                        <div class="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant/50 mb-2">Transcript</div>
+                        <div class="text-[13px] leading-relaxed text-on-surface-variant/90">
                             ${this.transcript.map((s, i) => `
-                                <span class="transcript-sentence" data-index="${i}" 
+                                <span class="transcript-sentence cursor-pointer px-1 py-0.5 -mx-1 rounded-[4px] transition-colors hover:bg-surface-variant" data-index="${i}" 
                                     onclick="AudioPlayerUI.seekToSentence(${i})">
                                     ${this.escapeHtml(s.text)}
                                 </span>
@@ -192,13 +196,15 @@ const AudioPlayerUI = {
         if (newIndex !== this.currentSentenceIndex) {
             // Remove old highlight
             const oldEl = this.container?.querySelector('.transcript-sentence.active');
-            if (oldEl) oldEl.classList.remove('active');
+            if (oldEl) {
+                oldEl.classList.remove('active', 'bg-primary/10', 'text-primary');
+            }
 
             // Add new highlight
             if (newIndex >= 0) {
                 const newEl = this.container?.querySelector(`.transcript-sentence[data-index="${newIndex}"]`);
                 if (newEl) {
-                    newEl.classList.add('active');
+                    newEl.classList.add('active', 'bg-primary/10', 'text-primary');
                     // Scroll into view
                     newEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }

@@ -9,19 +9,25 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime, timedelta
 
 
-TOKEN_FILE = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-    "data", "calendar_token.json"
-)
 _backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 _root_dir = os.path.dirname(_backend_dir)
 
-# Support credentials.json in either backend/ or project root
-if os.path.exists(os.path.join(_root_dir, "credentials.json")):
+# Search for credentials in backend/ first, then project root
+if os.path.exists(os.path.join(_backend_dir, "credentials.json")):
+    CREDENTIALS_FILE = os.path.join(_backend_dir, "credentials.json")
+elif os.path.exists(os.path.join(_root_dir, "credentials.json")):
     CREDENTIALS_FILE = os.path.join(_root_dir, "credentials.json")
 else:
     CREDENTIALS_FILE = os.path.join(_backend_dir, "credentials.json")
-SCOPES = ["https://www.googleapis.com/auth/calendar"]
+
+# Use SAME token path as the OAuth web flow (routes_auth.py)
+TOKEN_FILE = os.path.join(_backend_dir, "token.json")
+
+SCOPES = [
+    "https://www.googleapis.com/auth/calendar",
+    "https://www.googleapis.com/auth/gmail.send",
+    "https://www.googleapis.com/auth/gmail.readonly",
+]
 
 
 class CalendarAdapter:

@@ -76,10 +76,12 @@ class EmailIntelligence:
         """Full cognition analysis of an email or thread."""
         prompt = self._build_prompt(email_text, thread_context)
 
+        from api.routes_settings import _load_preferences
+        _model = _load_preferences().get('default_model', 'groq/llama-3.3-70b-versatile')
         raw = self.llm.get_response(
             prompt=prompt,
             system_prompt=EMAIL_COGNITION_PROMPT,
-            model="llama-3.3-70b-versatile",
+            model=_model,
         )
 
         return self._parse_result(raw)
@@ -112,10 +114,12 @@ EMAIL:
 
 Output ONLY the reply text, nothing else."""
 
+        from api.routes_settings import _load_preferences
+        _model = _load_preferences().get('default_model', 'groq/llama-3.3-70b-versatile')
         return self.llm.get_response(
             prompt=prompt,
             system_prompt="You are a professional email writing assistant. Write concise, well-structured replies.",
-            model="llama-3.3-70b-versatile",
+            model=_model,
         )
 
     def suggest_follow_up(self, email_text: str,
@@ -167,10 +171,12 @@ Output ONLY the reply text, nothing else."""
             for m in thread_messages
         ])
 
+        from api.routes_settings import _load_preferences
+        _model = _load_preferences().get('default_model', 'groq/llama-3.3-70b-versatile')
         return self.llm.get_response(
             prompt=f"Summarize this email thread concisely:\n\n{thread_text[:4000]}",
             system_prompt="You are an email summarization assistant. Provide a concise, structured summary with key points, decisions made, and outstanding items.",
-            model="llama-3.3-70b-versatile",
+            model=_model,
         )
 
     # ── Internal ──────────────────────────────────────────────────

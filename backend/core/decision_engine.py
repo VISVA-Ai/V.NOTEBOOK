@@ -153,10 +153,12 @@ This appears to contain multiple requests. Split into separate intents.
 Output a JSON array of intent objects, each with: intent, parameters (extract what you can), missing_fields.
 Output ONLY the JSON array."""
 
+        from api.routes_settings import _load_preferences
+        _model = _load_preferences().get('default_model', 'groq/llama-3.3-70b-versatile')
         raw = self.parser.llm.get_response(
             prompt=split_prompt,
             system_prompt="You split compound user requests into individual action intents. Output strict JSON array only.",
-            model="llama-3.3-70b-versatile",
+            model=_model,
         )
 
         try:
@@ -445,10 +447,12 @@ CRITICAL RULES:
 5. Output ONLY the raw JSON object, no markdown blocks, no thinking text."""
 
         try:
+            from api.routes_settings import _load_preferences
+            _model = _load_preferences().get('default_model', 'groq/llama-3.3-70b-versatile')
             raw = self.parser.llm.get_response(
                 prompt=prompt,
                 system_prompt="You are a professional email writer. Output strict JSON only.",
-                model="llama-3.3-70b-versatile",
+                model=_model,
             )
 
             import json, re
@@ -531,10 +535,12 @@ RULES:
 5. Output ONLY the email body text, no JSON, no markdown.
 """
 
+        from api.routes_settings import _load_preferences
+        _model = _load_preferences().get('default_model', 'groq/llama-3.3-70b-versatile')
         raw = self.parser.llm.get_response(
             prompt=prompt,
             system_prompt="You write concise, professional email replies. Output the email body only.",
-            model="llama-3.3-70b-versatile",
+            model=_model,
         )
 
         body = raw.strip()
